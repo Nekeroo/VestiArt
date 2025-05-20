@@ -12,14 +12,14 @@ import java.io.FileOutputStream;
 @Service
 public class PdfServiceImpl implements PdfService {
 
-    public String generatePdf() throws FileNotFoundException, DocumentException {
+    public String generatePdf(String textGenerated, String pdfTitle) throws FileNotFoundException, DocumentException {
         Document document = new Document();
 
-        PdfWriter.getInstance(document, new FileOutputStream("test.pdf"));
+        PdfWriter.getInstance(document, new FileOutputStream(pdfTitle + ".pdf"));
 
         document.open();
 
-        Paragraph par = new Paragraph("Hello World");
+        Paragraph par = new Paragraph(textGenerated);
 
         document.add(par);
 

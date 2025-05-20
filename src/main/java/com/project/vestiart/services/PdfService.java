@@ -6,6 +6,6 @@ import java.io.FileNotFoundException;
 
 public interface PdfService {
 
-    String generatePdf() throws FileNotFoundException, DocumentException;
+    String generatePdf(String textGenerated, String pdfTitle) throws FileNotFoundException, DocumentException;
 
 }
