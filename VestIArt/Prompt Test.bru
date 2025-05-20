@@ -1,0 +1,19 @@
+meta {
+  name: Prompt Test
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/openapi/ai/message
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "person" : "Luke SkyWalker",
+    "reference" :"Star Wars",
+    "type" : 0
+  }
+}
