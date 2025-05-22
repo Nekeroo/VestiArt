@@ -27,7 +27,6 @@ public class InnovationController {
         this.openAIController = openAIController;
     }
 
-    @PostMapping("/create")
     public IdeaDTO createIdeaFromRequest(@RequestBody RequestInput input) throws IOException, URISyntaxException {
 
         String prompt = PromptUtils.formatPromptRequest(input.getPerson(), input.getReference(), input.getType());
@@ -43,7 +42,7 @@ public class InnovationController {
                 .build();
     }
 
-    @PostMapping("/create/multiple")
+    @PostMapping("/create")
     public List<IdeaDTO> createMultipleIdeasFromRequest(@RequestBody List<RequestInput> inputs) {
 
         ExecutorService executorService = Executors.newFixedThreadPool(Math.min(inputs.size(), 10));

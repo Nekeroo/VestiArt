@@ -1,0 +1,1 @@
+ALTER TABLE bucketinfos ADD COLUMN date_create TIMESTAMP;

@@ -4,6 +4,7 @@ import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.repositories.BucketInfosRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ public class BucketInfosDatabaseService {
     }
 
     public void addBucketInfos(BucketInfos bucketInfos) {
+        bucketInfos.setDateCreate(LocalDateTime.now());
         bucketInfosRepository.save(bucketInfos);
     }
 

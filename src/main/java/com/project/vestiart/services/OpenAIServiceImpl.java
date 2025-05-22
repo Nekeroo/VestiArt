@@ -38,7 +38,7 @@ public class OpenAIServiceImpl implements OpenAIService {
                 new ImagePrompt(prompt,
                         OpenAiImageOptions.builder()
                                 .N(1)
-                                .model("dall-e-2")
+                                .model("dall-e-3")
                                 .height(1024)
                                 .width(1024).build())
         );
