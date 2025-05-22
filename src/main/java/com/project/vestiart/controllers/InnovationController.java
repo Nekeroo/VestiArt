@@ -1,0 +1,41 @@
+package com.project.vestiart.controllers;
+
+import com.project.vestiart.models.dto.IdeaDTO;
+import com.project.vestiart.models.input.RequestInput;
+import com.project.vestiart.utils.PromptUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Base64;
+
+@RestController
+@RequestMapping("/innovation")
+public class InnovationController {
+
+    private final OpenAIController openAIController;
+
+    public InnovationController(OpenAIController openAIController) {
+        this.openAIController = openAIController;
+    }
+
+    @PostMapping("/create")
+    public IdeaDTO createIdeaFromRequest(@RequestBody RequestInput input) throws IOException {
+
+        String prompt = PromptUtils.formatPromptRequest(input.getPerson(), input.getReference(), input.getType());
+
+        String resultFromTheIdea = openAIController.getChatResponse(prompt);
+
+        byte[] image = openAIController.getImage(resultFromTheIdea);
+
+        return IdeaDTO.builder()
+                .image(image)
+                .description(resultFromTheIdea)
+                .title(input.getPerson() + " Collection")
+                .build();
+    }
+
+}
