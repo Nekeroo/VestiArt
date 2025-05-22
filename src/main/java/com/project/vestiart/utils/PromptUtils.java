@@ -6,7 +6,7 @@ public class PromptUtils {
 
     public static String formatPromptRequest(String person, String reference, int type ) {
         return String.format(
-                "Do me a pub for a complet outfit that represent %s from %s %s.\\n\" +\"In this ad I need to know some informations like the following example. And please, don't use special style inside the response (surrender the \"*\" to have bold or italic text) \n" +
+                "Do me a pub for a complet outfit that represent %s from %s %s.\\n\" +\"In this ad I need to know some informations like the following example. And please, don't use special style inside the response (surrender the \"*\" to have bold or italic text). The result must contains les sthan 850 characters\n" +
                 "\n" +
                 "Introductory Sentence\n" +
                 "\n" +
