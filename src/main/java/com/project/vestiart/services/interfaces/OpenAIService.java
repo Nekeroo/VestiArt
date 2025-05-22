@@ -7,6 +7,6 @@ public interface OpenAIService {
 
     ChatResponse createMessage(String prompt);
 
-    ImageResponse getImage(String prompt);
+    ImageResponse createImage(String prompt);
 
 }

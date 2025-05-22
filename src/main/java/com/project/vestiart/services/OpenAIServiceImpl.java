@@ -33,7 +33,7 @@ public class OpenAIServiceImpl implements OpenAIService {
                 ));
     }
 
-    public ImageResponse getImage(String prompt) {
+    public ImageResponse createImage(String prompt) {
         return imageModel.call(
                 new ImagePrompt(prompt,
                         OpenAiImageOptions.builder()
