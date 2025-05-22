@@ -1,17 +1,19 @@
 package com.project.vestiart.controllers;
 
-import com.itextpdf.text.DocumentException;
 import com.project.vestiart.models.dto.IdeaDTO;
 import com.project.vestiart.models.input.RequestInput;
-import lombok.extern.slf4j.Slf4j;
+import com.project.vestiart.utils.PromptUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.FileNotFoundException;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Base64;
 
-@Slf4j
-@RestController("/innovation")
+@RestController
+@RequestMapping("/innovation")
 public class InnovationController {
 
     private final OpenAIController openAIController;
@@ -21,13 +23,14 @@ public class InnovationController {
     }
 
     @PostMapping("/create")
-    public IdeaDTO createIdeaFromRequest(@RequestBody RequestInput input) throws DocumentException, FileNotFoundException {
+    public IdeaDTO createIdeaFromRequest(@RequestBody RequestInput input) throws IOException {
 
-        // First Step, we call OpenAI for getting the Idea from the form
-        String resultFromTheIdea = openAIController.getChatResponse(input);
+        String prompt = PromptUtils.formatPromptRequest(input.getPerson(), input.getReference(), input.getType());
 
-        byte[] image = new byte[0];
-        // TODO : Récupérer image depuis la réponse précédente + la transformer en byteArray
+        String resultFromTheIdea = openAIController.getChatResponse(prompt);
+
+        byte[] image = openAIController.getImage(resultFromTheIdea);
+
         return IdeaDTO.builder()
                 .image(image)
                 .description(resultFromTheIdea)

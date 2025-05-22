@@ -43,6 +43,4 @@ public class OpenAIServiceImpl implements OpenAIService {
                                 .width(1024).build())
         );
     }
-
-
 }
