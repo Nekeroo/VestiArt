@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Base64;
 
 @RestController
@@ -23,13 +24,13 @@ public class InnovationController {
     }
 
     @PostMapping("/create")
-    public IdeaDTO createIdeaFromRequest(@RequestBody RequestInput input) throws IOException {
+    public IdeaDTO createIdeaFromRequest(@RequestBody RequestInput input) throws IOException, URISyntaxException {
 
         String prompt = PromptUtils.formatPromptRequest(input.getPerson(), input.getReference(), input.getType());
 
         String resultFromTheIdea = openAIController.getChatResponse(prompt);
 
-        byte[] image = openAIController.getImage(resultFromTheIdea);
+        String image = openAIController.getImage(input, resultFromTheIdea);
 
         return IdeaDTO.builder()
                 .image(image)
