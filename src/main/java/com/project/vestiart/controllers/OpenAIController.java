@@ -1,7 +1,9 @@
 package com.project.vestiart.controllers;
 
 import com.project.vestiart.models.BucketInfos;
+import com.project.vestiart.models.dto.BucketDTO;
 import com.project.vestiart.models.input.RequestInput;
+import com.project.vestiart.services.BucketInfosDatabaseService;
 import com.project.vestiart.services.BucketService;
 import com.project.vestiart.services.interfaces.OpenAIService;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -16,20 +18,18 @@ import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Controller
 public class OpenAIController {
 
     private final OpenAIService openAIService;
-    private String imageFilesPath = "./output/";
     private final BucketService bucketService;
+    private final BucketInfosDatabaseService bucketInfosDatabaseService;
 
-    public OpenAIController(OpenAIService openAIService, BucketService bucketService) {
+    public OpenAIController(OpenAIService openAIService, BucketService bucketService, BucketInfosDatabaseService bucketInfosDatabaseService) {
         this.openAIService = openAIService;
         this.bucketService = bucketService;
+        this.bucketInfosDatabaseService = bucketInfosDatabaseService;
     }
 
     public String getChatResponse(String prompt) {
@@ -44,14 +44,6 @@ public class OpenAIController {
 
             ImageResponse response = openAIService.createImage(prompt);
 
-            String simplifyName = imageFilesPath + prompt
-                    .substring(0, Math.min(prompt.length(), 20))
-                    .toLowerCase()
-                    .replace(",","")
-                    .replace("'","")
-                    .replace(" ","_")
-                    + ".png" ;
-
             Image image = response.getResult().getOutput();
 
             RestTemplate restTemplate = new RestTemplate();
@@ -62,6 +54,8 @@ public class OpenAIController {
             byte[] imageBytes = imageResponse.getBody();
 
             BucketInfos bucketInfos = bucketService.uploadFileFromGeneration(input, imageBytes);
+
+            bucketInfosDatabaseService.addBucketInfos(bucketInfos);
 
             return bucketInfos.getUrl();
 

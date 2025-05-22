@@ -1,17 +1,19 @@
 package com.project.vestiart.services;
 
 import com.project.vestiart.models.BucketInfos;
+import com.project.vestiart.models.dto.BucketDTO;
 import com.project.vestiart.models.input.RequestInput;
+import com.project.vestiart.repositories.BucketInfosRepository;
+import com.project.vestiart.utils.mappers.MultipartFileMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.BodyInserters.MultipartInserter;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.rmi.server.UID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BucketService {
@@ -19,38 +21,40 @@ public class BucketService {
     @Qualifier("bucketWebClient")
     private final WebClient bucketWebClient;
 
-    public BucketService(WebClient bucketWebClient) {
+    private final MultipartFileMapper multipartFileMapper;
+
+    private final BucketInfosRepository bucketInfosRepository;
+
+    public BucketService(WebClient bucketWebClient, MultipartFileMapper multipartFileMapper, BucketInfosRepository bucketInfosRepository) {
         this.bucketWebClient = bucketWebClient;
+        this.multipartFileMapper = multipartFileMapper;
+        this.bucketInfosRepository = bucketInfosRepository;
     }
 
     public BucketInfos uploadFileFromGeneration(RequestInput input, byte[] image) throws IOException {
 
+        UUID uidGenerated = generateUID();
 
         return bucketWebClient
                 .post()
                 .uri("/student/upload")
-                .body(getMultiPartInsert(image, input))
+                .body(multipartFileMapper.getMultiPartInsert(image, input, uidGenerated))
                 .retrieve()
                 .bodyToMono(BucketInfos.class)
                 .block();
     }
 
-    private static MultipartInserter getMultiPartInsert(byte[] file, RequestInput input) throws IOException {
-        MultipartBodyBuilder builder = new MultipartBodyBuilder();
-
-        ByteArrayResource ressource = new ByteArrayResource(file) {
-            @Override
-            public String getFilename() {
-                return "coucou.png";
-            }
-        } ;
-
-        builder.part("file", ressource);
-        builder.part("idExterne", 2);
-        builder.part("tag1", input.getPerson());
-        builder.part("tag2", input.getReference());
-        builder.part("tag3", input.getType());
-
-        return BodyInserters.fromMultipartData(builder.build());
+    public void deleteDocumentFromTheBucket(String uid) {
+        bucketWebClient
+                .delete()
+                .uri("/student/delete/" + uid);
     }
+
+    public UUID generateUID() {
+
+        UUID id = UUID.randomUUID();
+        return id;
+    }
+
+
 }

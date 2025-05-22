@@ -22,6 +22,6 @@ public class Idea {
 
     private String description;
 
-    private byte[] image;
+    private String image;
 
 }

@@ -1,14 +1,20 @@
 package com.project.vestiart.controllers;
 
+import com.itextpdf.text.DocumentException;
+import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.models.dto.IdeaDTO;
 import com.project.vestiart.services.PdfServiceImpl;
 import com.project.vestiart.services.interfaces.PdfService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("/pdf")
+import java.io.IOException;
+
+@RestController
+@RequestMapping("/pdf")
 public class PdfController {
 
     private final PdfService pdfService;
@@ -18,10 +24,16 @@ public class PdfController {
     }
 
     @PostMapping("/generate")
-    public byte[] generatePdf(@RequestBody IdeaDTO ideaDTO) {
-        // TODO : Créer la méthode PDF
-        return null;
+    public ResponseEntity<byte[]> generatePdf(@RequestBody IdeaDTO ideaDTO) throws DocumentException, IOException {
+        byte[] pdfBytes = pdfService.generatePdf(ideaDTO);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", ideaDTO.title() + ".pdf");
+
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
+
 
 }
 
