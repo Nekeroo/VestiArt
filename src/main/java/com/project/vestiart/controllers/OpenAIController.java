@@ -53,7 +53,7 @@ public class OpenAIController {
 
             byte[] imageBytes = imageResponse.getBody();
 
-            BucketInfos bucketInfos = bucketService.uploadFileFromGeneration(input, imageBytes);
+            BucketInfos bucketInfos = bucketService.uploadFileFromGeneration(input.getPerson(), input.getReference(), imageBytes, "image");
 
             bucketInfosDatabaseService.addBucketInfos(bucketInfos);
 

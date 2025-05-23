@@ -1,9 +1,6 @@
 package com.project.vestiart.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Builder
@@ -11,6 +8,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Idea {
 
     @Id
@@ -23,5 +21,9 @@ public class Idea {
     private String description;
 
     private String image;
+
+    private String tag1;
+
+    private String tag2;
 
 }

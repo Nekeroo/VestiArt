@@ -2,6 +2,7 @@ package com.project.vestiart.services;
 
 import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.models.dto.BucketDTO;
+import com.project.vestiart.models.dto.IdeaDTO;
 import com.project.vestiart.models.input.RequestInput;
 import com.project.vestiart.repositories.BucketInfosRepository;
 import com.project.vestiart.utils.mappers.MultipartFileMapper;
@@ -28,14 +29,14 @@ public class BucketService {
         this.multipartFileMapper = multipartFileMapper;
     }
 
-    public BucketInfos uploadFileFromGeneration(RequestInput input, byte[] image) throws IOException {
+    public BucketInfos uploadFileFromGeneration(String tag1, String tag2, byte[] document, String fileType) {
 
         UUID uidGenerated = generateUID();
 
         return bucketWebClient
                 .post()
                 .uri("/student/upload")
-                .body(multipartFileMapper.getMultiPartInsert(image, input, uidGenerated))
+                .body(multipartFileMapper.getMultiPartInsert(document, tag1, tag2 , uidGenerated, fileType))
                 .retrieve()
                 .bodyToMono(BucketInfos.class)
                 .block();

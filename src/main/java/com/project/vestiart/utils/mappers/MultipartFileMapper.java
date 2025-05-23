@@ -6,6 +6,7 @@ import org.springframework.http.client.MultipartBodyBuilder;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.BodyInserters.MultipartInserter;
 
 import java.util.UUID;
 
@@ -13,21 +14,21 @@ import java.util.UUID;
 @Service
 public class MultipartFileMapper {
 
-    public BodyInserters.MultipartInserter getMultiPartInsert(byte[] file, RequestInput input, UUID idExterne) {
+    public MultipartInserter getMultiPartInsert(byte[] file, String tag1, String tag2, UUID idExterne, String fileType) {
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
 
         ByteArrayResource ressource = new ByteArrayResource(file) {
             @Override
             public String getFilename() {
-                return input.getPerson() + ".png";
+                return tag1 + ".png";
             }
         } ;
 
         builder.part("file", ressource);
         builder.part("idExterne", idExterne.toString());
-        builder.part("tag1", input.getPerson());
-        builder.part("tag2", input.getReference());
-        builder.part("tag3", "image");
+        builder.part("tag1", tag1);
+        builder.part("tag2", tag2);
+        builder.part("tag3", fileType);
 
         return BodyInserters.fromMultipartData(builder.build());
     }

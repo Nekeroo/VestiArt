@@ -10,5 +10,5 @@ CREATE TABLE bucketinfos (
 CREATE TABLE idea(
     id BIGINT auto_increment PRIMARY KEY,
     title VARCHAR(256),
-    description VARCHAR(256)
+    description VARCHAR(1000)
 );
