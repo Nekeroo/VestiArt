@@ -1,1 +1,1 @@
-ALTER TABLE bucketinfos ADD COLUMN date_create TIMESTAMP;
+ALTER TABLE vestiart.bucketinfos ADD COLUMN date_create TIMESTAMP;

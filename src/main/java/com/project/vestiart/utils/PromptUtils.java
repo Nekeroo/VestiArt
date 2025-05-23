@@ -24,7 +24,7 @@ public class PromptUtils {
                 "Early Sentence to make people want to buy", person, reference, TypeEnum.findTypeEnumById(type));
     }
 
-    public static String formatPromptImage(String person, String reference, int type ) {
-        return "";
+    public static String formatPromptImage(String prompt) {
+        return String.format("Create me a 3D realistic picture to represent the following ad. I want something with multiple view. Please don't put any text on the picture. %s", prompt);
     }
 }

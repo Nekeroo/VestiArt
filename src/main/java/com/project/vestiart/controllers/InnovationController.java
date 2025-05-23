@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,11 +30,13 @@ public class InnovationController {
 
     public IdeaDTO createIdeaFromRequest(@RequestBody RequestInput input) throws IOException, URISyntaxException {
 
-        String prompt = PromptUtils.formatPromptRequest(input.getPerson(), input.getReference(), input.getType());
+        String promptText = PromptUtils.formatPromptRequest(input.getPerson(), input.getReference(), input.getType());
 
-        String resultFromTheIdea = openAIController.getChatResponse(prompt);
+        String resultFromTheIdea = openAIController.getChatResponse(promptText);
 
-        String image = openAIController.getImage(input, resultFromTheIdea);
+        String promptImage = PromptUtils.formatPromptImage(promptText);
+
+        String image = openAIController.getImage(input, promptImage);
 
         return IdeaDTO.builder()
                 .image(image)
