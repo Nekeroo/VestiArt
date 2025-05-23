@@ -1,4 +1,4 @@
-package com.project.vestiart.models.dto;
+package com.project.vestiart.dto;
 
 import lombok.Builder;
 

@@ -1,4 +1,4 @@
-package com.project.vestiart.models.input;
+package com.project.vestiart.input;
 
 import com.project.vestiart.models.Idea;
 import jakarta.persistence.*;

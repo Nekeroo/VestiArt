@@ -1,9 +1,7 @@
 package com.project.vestiart.services;
 
 import com.project.vestiart.models.Idea;
-import com.project.vestiart.models.dto.IdeaDTO;
 import com.project.vestiart.repositories.IdeaRepository;
-import jakarta.persistence.Id;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

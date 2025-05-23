@@ -5,7 +5,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.project.vestiart.models.dto.IdeaDTO;
+import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.services.interfaces.PdfService;
 import org.springframework.stereotype.Service;
 

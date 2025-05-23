@@ -1,5 +1,6 @@
 package com.project.vestiart.models;
 
+import com.project.vestiart.enums.TypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,5 +26,8 @@ public class Idea {
     private String tag1;
 
     private String tag2;
+
+    @Enumerated(EnumType.STRING)
+    private TypeEnum type;
 
 }

@@ -1,7 +1,7 @@
 package com.project.vestiart.controllers;
 
 import com.project.vestiart.models.BucketInfos;
-import com.project.vestiart.models.dto.BucketDTO;
+import com.project.vestiart.dto.BucketDTO;
 import com.project.vestiart.services.BucketInfosDatabaseService;
 import com.project.vestiart.services.BucketService;
 import com.project.vestiart.utils.mappers.BucketInfosMapper;

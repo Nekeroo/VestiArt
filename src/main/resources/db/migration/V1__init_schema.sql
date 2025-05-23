@@ -14,7 +14,8 @@ CREATE TABLE idea(
     description VARCHAR(1000),
     tag1 VARCHAR(40),
     tag2 VARCHAR(40),
-    image VARCHAR(256)
+    image VARCHAR(256),
+    type VARCHAR(20)
 );
 
 CREATE TABLE request_input (

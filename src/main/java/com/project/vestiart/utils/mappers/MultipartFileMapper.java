@@ -1,6 +1,5 @@
 package com.project.vestiart.utils.mappers;
 
-import com.project.vestiart.models.input.RequestInput;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.client.MultipartBodyBuilder;
 

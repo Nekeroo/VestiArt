@@ -1,10 +1,8 @@
 package com.project.vestiart.controllers;
 
 import com.itextpdf.text.DocumentException;
-import com.project.vestiart.models.BucketInfos;
-import com.project.vestiart.models.dto.IdeaDTO;
+import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.services.BucketService;
-import com.project.vestiart.services.PdfServiceImpl;
 import com.project.vestiart.services.interfaces.PdfService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
