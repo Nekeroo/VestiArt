@@ -1,3 +1,0 @@
-ALTER TABLE vestiart.idea ADD COLUMN tag1 VARCHAR(40);
-ALTER TABLE vestiart.idea ADD COLUMN tag2 VARCHAR(40);
-ALTER TABLE vestiart.idea ADD COLUMN image VARCHAR(256);
