@@ -1,12 +1,14 @@
 package com.project.vestiart.controllers;
 
 import com.project.vestiart.enums.TypeEnum;
+import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.models.Idea;
 import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.input.RequestInput;
 import com.project.vestiart.services.IdeaServiceImpl;
 import com.project.vestiart.services.RequestInputService;
 import com.project.vestiart.utils.PromptUtils;
+import com.project.vestiart.utils.mappers.IdeaMapper;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +28,13 @@ public class InnovationController {
     private final OpenAIController openAIController;
     private final IdeaServiceImpl ideaService;
     private final RequestInputService requestInputService;
+    private final IdeaMapper ideaMapper;
 
-    public InnovationController(OpenAIController openAIController, IdeaServiceImpl ideaService, RequestInputService requestInputService) {
+    public InnovationController(OpenAIController openAIController, IdeaServiceImpl ideaService, RequestInputService requestInputService, IdeaMapper ideaMapper) {
         this.openAIController = openAIController;
         this.ideaService = ideaService;
         this.requestInputService = requestInputService;
+        this.ideaMapper = ideaMapper;
     }
 
     public IdeaDTO createIdeaFromRequest(@RequestBody RequestInput input) throws IOException, URISyntaxException {
@@ -41,10 +45,11 @@ public class InnovationController {
 
         String promptImage = PromptUtils.formatPromptImage(promptText);
 
-        String image = openAIController.getImage(input, promptImage);
+        BucketInfos bucketInfos = openAIController.getImage(input, promptImage);
 
         Idea idea = Idea.builder()
-                .image(image)
+                .image(bucketInfos.getUrl())
+                .idExterne(bucketInfos.getIdExterne())
                 .description(resultFromTheIdea)
                 .title(input.getPerson() + " Collection")
                 .tag1(input.getPerson())
@@ -52,18 +57,11 @@ public class InnovationController {
                 .type(TypeEnum.findTypeEnumById(input.getType()))
                 .build();
 
-        ideaService.saveIdea(idea);
+        idea = ideaService.saveIdea(idea);
         input.setIdea(idea);
         requestInputService.saveRequestInput(input);
 
-        return IdeaDTO.builder()
-                .imageUrl(image)
-                .description(resultFromTheIdea)
-                .title(input.getPerson() + " Collection")
-                .tag1(input.getPerson())
-                .tag2(input.getReference())
-                .type(TypeEnum.findTypeEnumById(input.getType()))
-                .build();
+        return ideaMapper.mapIdeaToIdeaDTO(idea);
     }
 
     @PostMapping("/create")
