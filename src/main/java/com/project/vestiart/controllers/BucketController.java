@@ -65,7 +65,28 @@ public class BucketController {
         }
     }
 
-    // Récupérer les X derniers documents crées
-    // Récupérer liste paginée (X documents)
+    @GetMapping("/retrieve/last/{numberOfElements}")
+    public List<BucketDTO> retrieveLastBucketInfos(@PathVariable int numberOfElements) {
+        List<BucketInfos> bucketInfos = bucketInfosDatabaseService.retrieveLastBucketInfos(numberOfElements);
+        List<BucketDTO> resultList = new ArrayList<>();
+
+        for (BucketInfos bi : bucketInfos) {
+            resultList.add(bucketInfosMapper.mapBucketInfosToBucketDTO(bi));
+        }
+
+        return resultList;
+    }
+
+    @GetMapping("/retrieve/{page}/{size}")
+    public ResponseEntity<List<BucketDTO>> retrievePaginatedBucketInfos(@PathVariable int page, @PathVariable int size) {
+        List<BucketInfos> bucketInfos = bucketInfosDatabaseService.retrievePaginatedBucketInfos(page, size);
+        List<BucketDTO> resultList = new ArrayList<>();
+
+        for (BucketInfos bi : bucketInfos) {
+            resultList.add(bucketInfosMapper.mapBucketInfosToBucketDTO(bi));
+        }
+
+        return new ResponseEntity<>(resultList, HttpStatus.OK);
+    }
 
 }
