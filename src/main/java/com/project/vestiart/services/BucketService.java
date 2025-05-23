@@ -23,12 +23,9 @@ public class BucketService {
 
     private final MultipartFileMapper multipartFileMapper;
 
-    private final BucketInfosRepository bucketInfosRepository;
-
-    public BucketService(WebClient bucketWebClient, MultipartFileMapper multipartFileMapper, BucketInfosRepository bucketInfosRepository) {
+    public BucketService(WebClient bucketWebClient, MultipartFileMapper multipartFileMapper) {
         this.bucketWebClient = bucketWebClient;
         this.multipartFileMapper = multipartFileMapper;
-        this.bucketInfosRepository = bucketInfosRepository;
     }
 
     public BucketInfos uploadFileFromGeneration(RequestInput input, byte[] image) throws IOException {
@@ -51,9 +48,7 @@ public class BucketService {
     }
 
     public UUID generateUID() {
-
-        UUID id = UUID.randomUUID();
-        return id;
+        return UUID.randomUUID();
     }
 
 

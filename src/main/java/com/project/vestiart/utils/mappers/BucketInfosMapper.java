@@ -15,6 +15,7 @@ public class BucketInfosMapper {
                 .tag2(bucketInfos.getTag2())
                 .tag3(bucketInfos.getTag3())
                 .urlFile(bucketInfos.getUrl())
+                .dateTime(bucketInfos.getDateCreate())
                 .build();
     }
 
