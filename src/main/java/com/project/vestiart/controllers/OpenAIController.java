@@ -2,7 +2,6 @@ package com.project.vestiart.controllers;
 
 import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.input.RequestInput;
-import com.project.vestiart.services.BucketInfosDatabaseService;
 import com.project.vestiart.services.BucketService;
 import com.project.vestiart.services.interfaces.OpenAIService;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -23,12 +22,10 @@ public class OpenAIController {
 
     private final OpenAIService openAIService;
     private final BucketService bucketService;
-    private final BucketInfosDatabaseService bucketInfosDatabaseService;
 
-    public OpenAIController(OpenAIService openAIService, BucketService bucketService, BucketInfosDatabaseService bucketInfosDatabaseService) {
+    public OpenAIController(OpenAIService openAIService, BucketService bucketService) {
         this.openAIService = openAIService;
         this.bucketService = bucketService;
-        this.bucketInfosDatabaseService = bucketInfosDatabaseService;
     }
 
     public String getChatResponse(String prompt) {
@@ -39,7 +36,7 @@ public class OpenAIController {
         return generation.getOutput().getText();
     }
 
-    public String getImage(RequestInput input, String prompt) throws IOException, URISyntaxException {
+    public BucketInfos getImage(RequestInput input, String prompt) throws URISyntaxException {
 
             ImageResponse response = openAIService.createImage(prompt);
 
@@ -52,11 +49,7 @@ public class OpenAIController {
 
             byte[] imageBytes = imageResponse.getBody();
 
-            BucketInfos bucketInfos = bucketService.uploadFileFromGeneration(input.getPerson(), input.getReference(), imageBytes, "image");
-
-            bucketInfosDatabaseService.addBucketInfos(bucketInfos);
-
-            return bucketInfos.getUrl();
+            return bucketService.uploadFileFromGeneration(input.getPerson(), input.getReference(), imageBytes, "image");
 
         }
 
