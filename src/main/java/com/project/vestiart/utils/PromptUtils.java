@@ -1,6 +1,6 @@
 package com.project.vestiart.utils;
 
-import com.project.vestiart.models.enums.TypeEnum;
+import com.project.vestiart.enums.TypeEnum;
 
 public class PromptUtils {
 

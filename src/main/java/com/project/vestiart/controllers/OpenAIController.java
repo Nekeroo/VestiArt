@@ -1,8 +1,7 @@
 package com.project.vestiart.controllers;
 
 import com.project.vestiart.models.BucketInfos;
-import com.project.vestiart.models.dto.BucketDTO;
-import com.project.vestiart.models.input.RequestInput;
+import com.project.vestiart.input.RequestInput;
 import com.project.vestiart.services.BucketInfosDatabaseService;
 import com.project.vestiart.services.BucketService;
 import com.project.vestiart.services.interfaces.OpenAIService;
@@ -53,7 +52,7 @@ public class OpenAIController {
 
             byte[] imageBytes = imageResponse.getBody();
 
-            BucketInfos bucketInfos = bucketService.uploadFileFromGeneration(input, imageBytes);
+            BucketInfos bucketInfos = bucketService.uploadFileFromGeneration(input.getPerson(), input.getReference(), imageBytes, "image");
 
             bucketInfosDatabaseService.addBucketInfos(bucketInfos);
 

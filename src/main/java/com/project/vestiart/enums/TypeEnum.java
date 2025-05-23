@@ -1,4 +1,4 @@
-package com.project.vestiart.models.enums;
+package com.project.vestiart.enums;
 
 import lombok.Getter;
 

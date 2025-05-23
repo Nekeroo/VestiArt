@@ -1,7 +1,7 @@
 package com.project.vestiart.utils.mappers;
 
 import com.project.vestiart.models.BucketInfos;
-import com.project.vestiart.models.dto.BucketDTO;
+import com.project.vestiart.dto.BucketDTO;
 import org.springframework.stereotype.Component;
 
 @Component

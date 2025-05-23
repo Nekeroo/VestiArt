@@ -1,19 +1,20 @@
 package com.project.vestiart.controllers;
 
-import com.project.vestiart.models.dto.IdeaDTO;
-import com.project.vestiart.models.input.RequestInput;
+import com.project.vestiart.enums.TypeEnum;
+import com.project.vestiart.models.Idea;
+import com.project.vestiart.dto.IdeaDTO;
+import com.project.vestiart.input.RequestInput;
+import com.project.vestiart.services.IdeaServiceImpl;
+import com.project.vestiart.services.RequestInputService;
 import com.project.vestiart.utils.PromptUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,9 +24,13 @@ import java.util.concurrent.Executors;
 public class InnovationController {
 
     private final OpenAIController openAIController;
+    private final IdeaServiceImpl ideaService;
+    private final RequestInputService requestInputService;
 
-    public InnovationController(OpenAIController openAIController) {
+    public InnovationController(OpenAIController openAIController, IdeaServiceImpl ideaService, RequestInputService requestInputService) {
         this.openAIController = openAIController;
+        this.ideaService = ideaService;
+        this.requestInputService = requestInputService;
     }
 
     public IdeaDTO createIdeaFromRequest(@RequestBody RequestInput input) throws IOException, URISyntaxException {
@@ -38,10 +43,26 @@ public class InnovationController {
 
         String image = openAIController.getImage(input, promptImage);
 
-        return IdeaDTO.builder()
+        Idea idea = Idea.builder()
                 .image(image)
                 .description(resultFromTheIdea)
                 .title(input.getPerson() + " Collection")
+                .tag1(input.getPerson())
+                .tag2(input.getReference())
+                .type(TypeEnum.findTypeEnumById(input.getType()))
+                .build();
+
+        ideaService.saveIdea(idea);
+        input.setIdea(idea);
+        requestInputService.saveRequestInput(input);
+
+        return IdeaDTO.builder()
+                .imageUrl(image)
+                .description(resultFromTheIdea)
+                .title(input.getPerson() + " Collection")
+                .tag1(input.getPerson())
+                .tag2(input.getReference())
+                .type(TypeEnum.findTypeEnumById(input.getType()))
                 .build();
     }
 

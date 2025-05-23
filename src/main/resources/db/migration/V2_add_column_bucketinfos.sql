@@ -1,1 +1,0 @@
-ALTER TABLE vestiart.bucketinfos ADD COLUMN date_create TIMESTAMP;
