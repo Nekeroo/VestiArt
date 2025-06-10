@@ -4,6 +4,8 @@ import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.input.RequestInput;
 import com.project.vestiart.services.BucketService;
 import com.project.vestiart.services.interfaces.OpenAIService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.image.Image;
 import org.springframework.ai.image.ImageResponse;
@@ -22,6 +24,7 @@ public class OpenAIController {
 
     private final OpenAIService openAIService;
     private final BucketService bucketService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenAIController.class);
 
     public OpenAIController(OpenAIService openAIService, BucketService bucketService) {
         this.openAIService = openAIService;
@@ -39,6 +42,7 @@ public class OpenAIController {
     public BucketInfos getImage(RequestInput input, String prompt) throws URISyntaxException {
 
             ImageResponse response = openAIService.createImage(prompt);
+            LOGGER.info("Image {}", response);
 
             Image image = response.getResult().getOutput();
 
