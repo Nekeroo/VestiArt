@@ -43,8 +43,8 @@ public class IdeaController {
 
     @GetMapping("/retrieve/{uid}")
     public IdeaDTO retrieIdeaByUid(@PathVariable String uid) {
-        Optional<Idea> Idea = ideaService.getIdeaByIdExterne(uid);
-        return Idea.map(ideaMapper::mapIdeaToIdeaDTO).orElse(null);
+        Optional<Idea> idea = ideaService.getIdeaByIdExterne(uid);
+        return idea.map(ideaMapper::mapIdeaToIdeaDTO).orElse(null);
     }
 
     @PostMapping("/add")

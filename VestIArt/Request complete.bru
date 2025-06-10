@@ -4,8 +4,16 @@ meta {
   seq: 3
 }
 
-get {
-  url: https://api.vesti-art.jaetan.fr/retrieve/all
+post {
+  url: http://vestiartapp.mathieugr.fr:8080/innovation/create
   body: json
-  auth: inherit
+  auth: none
+}
+
+body:json {
+  [{
+    "person" : "Ahh",
+    "reference" : "ooe",
+    "type" : 0
+  }]
 }

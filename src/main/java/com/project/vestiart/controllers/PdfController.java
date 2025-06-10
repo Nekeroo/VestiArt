@@ -2,6 +2,7 @@ package com.project.vestiart.controllers;
 
 import com.itextpdf.text.DocumentException;
 import com.project.vestiart.dto.IdeaDTO;
+import com.project.vestiart.services.AsyncService;
 import com.project.vestiart.services.BucketService;
 import com.project.vestiart.services.interfaces.PdfService;
 import org.springframework.http.HttpHeaders;
@@ -25,18 +26,18 @@ public class PdfController {
 
     private final PdfService pdfService;
     private final BucketService bucketService;
+    private final AsyncService asyncService;
 
-    public PdfController(PdfService pdfService, BucketService bucketService) {
+    public PdfController(PdfService pdfService, BucketService bucketService, AsyncService asyncService) {
         this.pdfService = pdfService;
         this.bucketService = bucketService;
+        this.asyncService = asyncService;
     }
 
     @PostMapping("/generate")
     public ResponseEntity<byte[]> generatePdf(@RequestBody List<IdeaDTO> listIdeaDTOs) throws IOException {
-        ExecutorService executorService = Executors.newFixedThreadPool(Math.min(listIdeaDTOs.size(), 10));
-
         List<CompletableFuture<byte[]>> futures = listIdeaDTOs.stream()
-                .map(input -> CompletableFuture.supplyAsync(() -> {
+                .map(input -> asyncService.runAsync(() -> {
                     try {
                         byte[] pdfBytes = pdfService.generatePdf(input);
                         bucketService.uploadFileFromGeneration(input.tag1(), input.tag2(), pdfBytes, "pdf");
@@ -44,14 +45,12 @@ public class PdfController {
                     } catch (DocumentException | IOException e) {
                         throw new RuntimeException(e);
                     }
-                }, executorService))
+                }))
                 .toList();
 
         List<byte[]> listPDF = futures.stream()
                 .map(CompletableFuture::join)
                 .toList();
-
-        executorService.shutdown();
 
         byte[] zipBytes = null;
 
