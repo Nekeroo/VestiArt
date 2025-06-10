@@ -9,6 +9,8 @@ import com.project.vestiart.services.IdeaServiceImpl;
 import com.project.vestiart.services.RequestInputService;
 import com.project.vestiart.utils.PromptUtils;
 import com.project.vestiart.utils.mappers.IdeaMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +32,8 @@ public class InnovationController {
     private final RequestInputService requestInputService;
     private final IdeaMapper ideaMapper;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(InnovationController.class);
+
     public InnovationController(OpenAIController openAIController, IdeaServiceImpl ideaService, RequestInputService requestInputService, IdeaMapper ideaMapper) {
         this.openAIController = openAIController;
         this.ideaService = ideaService;
@@ -41,10 +45,12 @@ public class InnovationController {
 
         String promptText = PromptUtils.formatPromptRequest(input.getPerson(), input.getReference(), input.getType());
 
+        LOGGER.info("Request Text");
         String resultFromTheIdea = openAIController.getChatResponse(promptText);
 
         String promptImage = PromptUtils.formatPromptImage(promptText);
 
+        LOGGER.info("Request Image");
         BucketInfos bucketInfos = openAIController.getImage(input, promptImage);
 
         Idea idea = Idea.builder()
