@@ -7,11 +7,13 @@ import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.input.RequestInput;
 import com.project.vestiart.services.AsyncService;
 import com.project.vestiart.services.IdeaServiceImpl;
+import com.project.vestiart.services.OpenAIServiceImpl;
 import com.project.vestiart.services.RequestInputService;
 import com.project.vestiart.utils.PromptUtils;
 import com.project.vestiart.utils.mappers.IdeaMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +30,7 @@ import java.util.concurrent.Executors;
 @RequestMapping("/innovation")
 public class InnovationController {
 
-    private final OpenAIController openAIController;
+    private final OpenAIServiceImpl openAIService;
     private final IdeaServiceImpl ideaService;
     private final RequestInputService requestInputService;
     private final IdeaMapper ideaMapper;
@@ -36,8 +38,8 @@ public class InnovationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InnovationController.class);
 
-    public InnovationController(OpenAIController openAIController, IdeaServiceImpl ideaService, RequestInputService requestInputService, IdeaMapper ideaMapper, AsyncService asyncService) {
-        this.openAIController = openAIController;
+    public InnovationController(OpenAIServiceImpl openAIService, IdeaServiceImpl ideaService, RequestInputService requestInputService, IdeaMapper ideaMapper, AsyncService asyncService) {
+        this.openAIService = openAIService;
         this.ideaService = ideaService;
         this.requestInputService = requestInputService;
         this.ideaMapper = ideaMapper;
@@ -49,12 +51,12 @@ public class InnovationController {
         String promptText = PromptUtils.formatPromptRequest(input.getPerson(), input.getReference(), input.getType());
 
         LOGGER.info("Request Text");
-        String resultFromTheIdea = openAIController.getChatResponse(promptText);
+        String resultFromTheIdea = openAIService.getMessageFromResponseOpenAi(promptText);
 
         String promptImage = PromptUtils.formatPromptImage(promptText);
 
         LOGGER.info("Request Image");
-        BucketInfos bucketInfos = openAIController.getImage(input, promptImage);
+        BucketInfos bucketInfos = openAIService.getImageFromResponseOpenAi(input, promptImage);
 
         Idea idea = Idea.builder()
                 .image(bucketInfos.getUrl())
