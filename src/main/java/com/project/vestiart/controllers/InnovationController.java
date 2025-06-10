@@ -5,6 +5,7 @@ import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.models.Idea;
 import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.input.RequestInput;
+import com.project.vestiart.services.AsyncService;
 import com.project.vestiart.services.IdeaServiceImpl;
 import com.project.vestiart.services.RequestInputService;
 import com.project.vestiart.utils.PromptUtils;
@@ -31,6 +32,7 @@ public class InnovationController {
     private final IdeaServiceImpl ideaService;
     private final RequestInputService requestInputService;
     private final IdeaMapper ideaMapper;
+    private final AsyncService asyncService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InnovationController.class);
 
@@ -39,6 +41,7 @@ public class InnovationController {
         this.ideaService = ideaService;
         this.requestInputService = requestInputService;
         this.ideaMapper = ideaMapper;
+        this.asyncService = asyncService;
     }
 
     public IdeaDTO createIdeaFromRequest(@RequestBody RequestInput input) throws IOException, URISyntaxException {
@@ -76,16 +79,16 @@ public class InnovationController {
         ExecutorService executorService = Executors.newFixedThreadPool(Math.min(inputs.size(), 10));
 
         List<CompletableFuture<IdeaDTO>> futures = inputs.stream()
-                .map(input -> CompletableFuture.supplyAsync(() -> {
+                .map(input -> asyncService.runAsync(() -> {
                     try {
                         return createIdeaFromRequest(input);
                     } catch (IOException | URISyntaxException e) {
                         throw new RuntimeException(e);
                     }
-                }, executorService))
+                }))
                 .toList();
 
-        List<IdeaDTO> ideaDTOS = futures.stream()
+        return futures.stream()
                 .map(CompletableFuture::join)
                 .toList();
 
