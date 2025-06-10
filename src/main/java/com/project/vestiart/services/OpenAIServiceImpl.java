@@ -1,6 +1,8 @@
 package com.project.vestiart.services;
 
 import com.project.vestiart.services.interfaces.OpenAIService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.image.ImagePrompt;
@@ -16,6 +18,7 @@ public class OpenAIServiceImpl implements OpenAIService {
 
     private final OpenAiChatModel chatModel;
     private final OpenAiImageModel imageModel;
+    private static final Logger LOGGER =  LoggerFactory.getLogger(OpenAIServiceImpl.class);
 
     public OpenAIServiceImpl(OpenAiChatModel chatModel, OpenAiImageModel imageModel) {
         this.chatModel = chatModel;
@@ -34,6 +37,7 @@ public class OpenAIServiceImpl implements OpenAIService {
     }
 
     public ImageResponse createImage(String prompt) {
+        LOGGER.info("Creating image with prompt {}", prompt);
         return imageModel.call(
                 new ImagePrompt(prompt,
                         OpenAiImageOptions.builder()
