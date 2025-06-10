@@ -34,10 +34,9 @@ public class IdeaServiceImpl implements IdeaService {
         return ideas;
     }
 
-    public Idea saveIdea(Idea idea) {
+    public void saveIdea(Idea idea) {
         idea.setDateCreate(LocalDateTime.now());
         ideaRepository.save(idea);
-        return idea;
     }
 
     public Optional<Idea> getIdeaByIdExterne(String idExterne){

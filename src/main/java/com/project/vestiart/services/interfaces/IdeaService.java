@@ -11,7 +11,7 @@ public interface IdeaService {
 
     List<Idea> retrieveAll();
 
-    Idea saveIdea(Idea idea);
+    void saveIdea(Idea idea);
 
     Optional<Idea> getIdeaByIdExterne(String idExterne);
 

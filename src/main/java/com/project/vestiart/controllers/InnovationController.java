@@ -68,7 +68,7 @@ public class InnovationController {
                 .type(TypeEnum.findTypeEnumById(input.getType()))
                 .build();
 
-        idea = ideaService.saveIdea(idea);
+        ideaService.saveIdea(idea);
         input.setIdea(idea);
         requestInputService.saveRequestInput(input);
 
