@@ -36,7 +36,7 @@ public class InnovationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InnovationController.class);
 
-    public InnovationController(OpenAIController openAIController, IdeaServiceImpl ideaService, RequestInputService requestInputService, IdeaMapper ideaMapper) {
+    public InnovationController(OpenAIController openAIController, IdeaServiceImpl ideaService, RequestInputService requestInputService, IdeaMapper ideaMapper, AsyncService asyncService) {
         this.openAIController = openAIController;
         this.ideaService = ideaService;
         this.requestInputService = requestInputService;
@@ -76,8 +76,6 @@ public class InnovationController {
     @PostMapping("/create")
     public List<IdeaDTO> createMultipleIdeasFromRequest(@RequestBody List<RequestInput> inputs) {
 
-        ExecutorService executorService = Executors.newFixedThreadPool(Math.min(inputs.size(), 10));
-
         List<CompletableFuture<IdeaDTO>> futures = inputs.stream()
                 .map(input -> asyncService.runAsync(() -> {
                     try {
@@ -91,10 +89,6 @@ public class InnovationController {
         return futures.stream()
                 .map(CompletableFuture::join)
                 .toList();
-
-        executorService.shutdown();
-
-        return ideaDTOS;
     }
 
 }
