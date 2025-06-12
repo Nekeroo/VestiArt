@@ -17,10 +17,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final RoleServiceImpl roleServiceImpl;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, RoleServiceImpl roleServiceImpl) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.roleServiceImpl = roleServiceImpl;
     }
 
     @Override
@@ -38,10 +40,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerNewUserAccount(RegisterDTO userInfos) {
+        Role role = roleServiceImpl.getRoleById(1);
+
         User user = User.builder()
                 .username(userInfos.getUsername())
                 .password(bCryptPasswordEncoder.encode(userInfos.getPassword()))
+                .roles(List.of(role))
                 .build();
+
         return userRepository.save(user);
     }
 }
