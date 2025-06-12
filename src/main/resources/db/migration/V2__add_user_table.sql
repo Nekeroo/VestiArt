@@ -10,7 +10,14 @@ CREATE TABLE user
     id       BIGINT NOT NULL AUTO_INCREMENT,
     username VARCHAR(255),
     password VARCHAR(255),
-    role_id  BIGINT,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES role (id)
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT exists user_roles
+(
+    users_id BIGINT,
+    roles_id BIGINT,
+    FOREIGN KEY (users_id) REFERENCES user (id),
+    FOREIGN KEY (roles_id) REFERENCES role (id),
+    PRIMARY KEY (users_id, roles_id)
 );

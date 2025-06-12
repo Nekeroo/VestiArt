@@ -3,7 +3,10 @@ package com.project.vestiart.models;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import lombok.*;
+
+import java.util.List;
 
 @Builder
 @Getter
@@ -18,5 +21,8 @@ public class Role {
     private int id;
 
     private String name;
+
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users;
 
 }

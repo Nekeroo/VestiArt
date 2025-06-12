@@ -3,12 +3,14 @@ package com.project.vestiart.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Entity
 public class User {
 
     @Id
@@ -20,8 +22,7 @@ public class User {
 
     private String password;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Role> roles;
 
 }

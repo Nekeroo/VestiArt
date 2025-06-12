@@ -11,7 +11,7 @@ public interface UserService {
 
     User getUser(String username);
 
-    List<Role> getUserRoles(User user);
+    List<String> getUserRoles(User user);
 
     User registerNewUserAccount(RegisterDTO user);
 }

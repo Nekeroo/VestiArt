@@ -5,10 +5,12 @@ import com.project.vestiart.models.Role;
 import com.project.vestiart.models.User;
 import com.project.vestiart.repositories.UserRepository;
 import com.project.vestiart.services.interfaces.UserService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,9 +28,12 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findByUsername(username);
     }
 
-    @Override
-    public List<Role> getUserRoles(User user) {
-        return List.of();
+    public List<String> getUserRoles(User user) {
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        return user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.project.vestiart.config.JwtTokenProvider;
 import com.project.vestiart.dto.AuthResponseDTO;
 import com.project.vestiart.input.LoginDTO;
 import com.project.vestiart.input.RegisterDTO;
+import com.project.vestiart.models.ErrorMessage;
 import com.project.vestiart.models.Role;
 import com.project.vestiart.models.User;
 import com.project.vestiart.services.UserServiceImpl;
@@ -45,16 +46,14 @@ public class AuthentController {
             String userName = loginDto.getUsername();
             User user = userService.getUser(loginDto.getUsername());
 
-            List<Role> roles = userService.getUserRoles(user);
-
-            List<String> rolesAsString = roles.stream().map(Role::getName).toList();
+            List<String> roles = userService.getUserRoles(user);
 
             // Create security token for user
-            String token = jwtTokenProvider.generateToken(userName, rolesAsString);
+            String token = jwtTokenProvider.generateToken(userName, roles);
 
-            return ResponseEntity.ok(new AuthResponseDTO(userName, token, roles.getFirst()));
+            return ResponseEntity.ok(new AuthResponseDTO(userName, token, roles));
         } catch (AuthenticationException e) {
-            return ResponseEntity.badRequest().body("Invalid username or password");
+            return ResponseEntity.badRequest().body(ErrorMessage.builder().message("Invalid username or password").build());
         }
     }
 

@@ -36,7 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             logger.error("Error check for user " + username, usernameNotFoundException);
             throw usernameNotFoundException;
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(List.of(user.getRole())));
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
