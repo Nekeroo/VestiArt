@@ -4,11 +4,9 @@ import com.project.vestiart.config.JwtTokenProvider;
 import com.project.vestiart.dto.AuthResponseDTO;
 import com.project.vestiart.input.LoginDTO;
 import com.project.vestiart.input.RegisterDTO;
-import com.project.vestiart.models.ErrorMessage;
-import com.project.vestiart.models.Role;
+import com.project.vestiart.models.Message;
 import com.project.vestiart.models.User;
 import com.project.vestiart.services.UserServiceImpl;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,6 +41,11 @@ public class AuthentController {
             Authentication authentication = authenticationManager.authenticate(authToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            User potentialUser = userService.getUser(loginDto.getUsername());
+
+            if (potentialUser != null) {
+                return ResponseEntity.badRequest().body(Message.builder().content("Username is already taken!").build());
+            }
             // Gather the infos on user
             String userName = loginDto.getUsername();
             User user = userService.getUser(loginDto.getUsername());
@@ -54,14 +57,14 @@ public class AuthentController {
 
             return ResponseEntity.ok(new AuthResponseDTO(userName, token, roles));
         } catch (AuthenticationException e) {
-            return ResponseEntity.badRequest().body(ErrorMessage.builder().message("Invalid username or password").build());
+            return ResponseEntity.badRequest().body(Message.builder().content("Invalid username or password").build());
         }
     }
 
     @PostMapping("/api/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterDTO userInfos) {
         userService.registerNewUserAccount(userInfos);
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.ok(Message.builder().content("User registered successfully!").build());
     }
 
 }

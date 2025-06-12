@@ -7,8 +7,8 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ErrorMessage {
+public class Message {
 
-    private String message;
+    private String content;
 
 }
