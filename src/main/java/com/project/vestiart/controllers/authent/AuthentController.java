@@ -52,7 +52,7 @@ public class AuthentController {
             // Create security token for user
             String token = jwtTokenProvider.generateToken(userName, rolesAsString);
 
-            return ResponseEntity.ok(new AuthResponseDTO(token, userName));
+            return ResponseEntity.ok(new AuthResponseDTO(userName, token, roles.getFirst()));
         } catch (AuthenticationException e) {
             return ResponseEntity.badRequest().body("Invalid username or password");
         }
