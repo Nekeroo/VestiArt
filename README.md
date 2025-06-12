@@ -29,7 +29,13 @@
   * /retrieve/{page}/{size}
     * Retourne les X éléments de la page X
 
-
+* /auth
+  * /api/login 
+    * Connecte l'user
+  * /api/register
+    * Enregistrer l'user
+  * /me
+    * Retourne les infos de l'user
 
 
 **ERREUR GEREE**

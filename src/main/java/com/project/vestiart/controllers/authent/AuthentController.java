@@ -10,18 +10,25 @@ import com.project.vestiart.models.Role;
 import com.project.vestiart.models.User;
 import com.project.vestiart.services.UserServiceImpl;
 import com.project.vestiart.utils.mappers.UserMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Key;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,6 +39,9 @@ public class AuthentController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserServiceImpl userService;
     private final UserMapper userMapper;
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     public AuthentController(JwtTokenProvider jwtTokenProvider, UserServiceImpl userService, AuthenticationManager authenticationManager, UserMapper userMapper) {
         this.jwtTokenProvider = jwtTokenProvider;
@@ -80,6 +90,39 @@ public class AuthentController {
         UserDTO userDTO = userMapper.mapUserToUserDTO(user, token);
         System.out.println(userDTO);
         return ResponseEntity.ok().body(userDTO);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me(@RequestHeader(value = "Authorization",required = false) String authorizationHeader) {
+
+        if (authorizationHeader == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
+        }
+
+        try {
+            String token = authorizationHeader.replace("Bearer ", "");
+
+            Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+
+            Jws<Claims> claimsJws = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            Claims claims = claimsJws.getBody();
+
+            String username = claims.getSubject();
+
+            User user = userService.getUser(username);
+
+            UserDTO userDTOREsult = userMapper.mapUserToUserDTO(user, token);
+
+            return ResponseEntity.ok().body(userDTOREsult);
+        }
+
+        catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
+        }
     }
 
 }
