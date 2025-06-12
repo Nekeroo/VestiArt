@@ -86,8 +86,20 @@ public class IdeaController {
         }
     }
 
+    
+    @Operation(summary = "Retrieve ideas with pagination and sorting",
+            description = "Get a paginated list of ideas with dynamic sorting capability")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ideas found and returned successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RetrieveIdeaDTO.class))),
+            @ApiResponse(responseCode = "204", description = "No ideas found for the given parameters")
+    })
     @GetMapping("/retrieve")
-    public ResponseEntity<?> retrieveIdeaWithParameters(@RequestParam int start, @RequestParam int nbElement, @RequestParam String sortKey) {
+    public ResponseEntity<?> retrieveIdeaWithParameters(
+            @Parameter(description = "Starting index for pagination") @RequestParam int start,
+            @Parameter(description = "Number of elements to retrieve") @RequestParam int nbElement,
+            @Parameter(description = "Key to sort the ideas by") @RequestParam String sortKey) {
 
         RetrieveIdeaDTO ideas = ideaService.getIdeasAfterDynamic(start, nbElement, sortKey);
 
