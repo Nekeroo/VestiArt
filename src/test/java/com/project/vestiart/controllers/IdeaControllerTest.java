@@ -55,7 +55,7 @@ class IdeaControllerTest {
 
         // Setup test data
         testIdea = new Idea();
-        testIdea.setIdExterne("test-uid-123");
+        testIdea.setIdExterneImage("test-uid-123");
         // Add other properties as needed based on your Idea model
 
         testIdeaDTO = IdeaDTO.builder()

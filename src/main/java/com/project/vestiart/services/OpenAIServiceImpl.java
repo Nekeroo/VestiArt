@@ -83,7 +83,7 @@ public class OpenAIServiceImpl implements OpenAIService {
 
         byte[] imageBytes = imageResponse.getBody();
 
-        return bucketService.uploadFileFromGeneration(input.getPerson(), input.getReference(), imageBytes, "image");
+        return bucketService.uploadFileFromGeneration(input.getPerson(), input.getReference(), imageBytes, ".png");
 
     }
 }

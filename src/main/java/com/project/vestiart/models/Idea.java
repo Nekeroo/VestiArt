@@ -24,8 +24,11 @@ public class Idea {
 
     private String description;
 
-    @Column(name = "idexterne")
-    private String idExterne;
+    @Column(name = "idexterneimage")
+    private String idExterneImage;
+
+    @Column(name = "idexternepdf")
+    private String idExternePdf;
 
     private String image;
 

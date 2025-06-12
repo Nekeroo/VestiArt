@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface IdeaRepository extends CrudRepository<Idea, Long> {
 
-    Optional<Idea> findByidExterne(String idExterne);
+    Optional<Idea> findByidExterneImage(String idExterneImage);
 
     List<Idea> findAllByOrderByDateCreateDesc(Pageable pageRequest);
 
