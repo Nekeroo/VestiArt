@@ -30,6 +30,10 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findByUsername(username);
     }
 
+    public boolean isAnyUserWithThisUsername(String username) {
+        return this.userRepository.existsUserByUsername(username);
+    }
+
     public List<String> getUserRoles(User user) {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
