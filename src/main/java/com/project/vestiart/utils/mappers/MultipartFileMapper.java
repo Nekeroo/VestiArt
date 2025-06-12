@@ -19,7 +19,7 @@ public class MultipartFileMapper {
         ByteArrayResource ressource = new ByteArrayResource(file) {
             @Override
             public String getFilename() {
-                return tag1 + ".png";
+                return tag1 + fileType;
             }
         } ;
 

@@ -21,4 +21,7 @@ public interface IdeaService {
 
     List<Idea> retrievePaginatedIdea(int page, int size);
 
+    Idea updateIdea(Idea idea);
+
+
 }

@@ -60,7 +60,7 @@ public class InnovationController {
 
         Idea idea = Idea.builder()
                 .image(bucketInfos.getUrl())
-                .idExterne(bucketInfos.getIdExterne())
+                .idExterneImage(bucketInfos.getIdExterne())
                 .description(resultFromTheIdea)
                 .title(input.getPerson() + " Collection")
                 .tag1(input.getPerson())

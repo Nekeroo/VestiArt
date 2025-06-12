@@ -1,7 +1,6 @@
 package com.project.vestiart.services;
 
 import com.project.vestiart.models.Idea;
-import com.project.vestiart.models.Idea;
 import com.project.vestiart.repositories.IdeaRepository;
 import com.project.vestiart.services.interfaces.IdeaService;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +27,7 @@ public class IdeaServiceImpl implements IdeaService {
         List<Idea> ideas    = new ArrayList<>();
 
         for (Idea idea : ideaList) {
-                ideas.add(idea);
+            ideas.add(idea);
         }
 
         return ideas;
@@ -39,8 +38,19 @@ public class IdeaServiceImpl implements IdeaService {
         ideaRepository.save(idea);
     }
 
+    public Idea updateIdea(Idea idea) {
+        Idea ideaStored = ideaRepository.findById(idea.getId()).get();
+
+        ideaStored.setIdExternePdf(idea.getIdExternePdf());
+        ideaStored.setPdf(idea.getPdf());
+
+        ideaRepository.save(ideaStored);
+
+        return ideaStored;
+    }
+
     public Optional<Idea> getIdeaByIdExterne(String idExterne){
-        return ideaRepository.findByidExterne(idExterne);
+        return ideaRepository.findByidExterneImage(idExterne);
     }
 
     public void removeIdea(Idea Idea) {
