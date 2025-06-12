@@ -1,24 +1,38 @@
 package com.project.vestiart.services;
 
+import com.project.vestiart.dto.IdeaDTO;
+import com.project.vestiart.dto.RetrieveIdeaDTO;
 import com.project.vestiart.models.Idea;
 import com.project.vestiart.repositories.IdeaRepository;
 import com.project.vestiart.services.interfaces.IdeaService;
+import com.project.vestiart.utils.mappers.IdeaMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class IdeaServiceImpl implements IdeaService {
 
-    private final IdeaRepository ideaRepository;
+    @PersistenceContext
+    private EntityManager em;
 
-    public IdeaServiceImpl(IdeaRepository ideaRepository) {
+    private final IdeaRepository ideaRepository;
+    private final IdeaMapper ideaMapper;
+
+    public IdeaServiceImpl(IdeaRepository ideaRepository, IdeaMapper ideaMapper) {
         this.ideaRepository = ideaRepository;
+        this.ideaMapper = ideaMapper;
     }
 
     public List<Idea> retrieveAll() {
@@ -73,4 +87,20 @@ public class IdeaServiceImpl implements IdeaService {
         }
         return Idea;
     }
+
+    public RetrieveIdeaDTO getIdeasAfterDynamic(int start, int size, String orderType)
+    {
+        int page = start / size;
+        Pageable pageRequest = PageRequest.of(page, size, Sort.by(orderType));
+
+        List<Idea> ideas = ideaRepository.findAll(pageRequest);
+
+        List<IdeaDTO> ideasDTO = ideas.stream().map(ideaMapper::mapIdeaToIdeaDTO).toList();
+
+        return RetrieveIdeaDTO.builder()
+                .ideas(ideasDTO)
+                .nextKey(start + ideas.size())
+                .build();
+    }
+
 }

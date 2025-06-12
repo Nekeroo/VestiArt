@@ -1,5 +1,6 @@
 package com.project.vestiart.controllers;
 
+import com.project.vestiart.dto.RetrieveIdeaDTO;
 import com.project.vestiart.models.Idea;
 import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.services.BucketService;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,22 +36,6 @@ public class IdeaController {
         this.ideaService = ideaService;
         this.ideaMapper = ideaMapper;
         this.bucketService = bucketService;
-    }
-
-    @Operation(summary = "Retrieve all ideas", description = "Get a list of all available ideas")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved all ideas",
-            content = @Content(schema = @Schema(implementation = IdeaDTO.class)))
-    @GetMapping("/retrieve/all")
-    public List<IdeaDTO> retrieveAllIdea() {
-        List<Idea> ideaList =  ideaService.retrieveAll();
-
-        List<IdeaDTO> resultList = new ArrayList<>();
-
-        for (Idea bi : ideaList) {
-            resultList.add(ideaMapper.mapIdeaToIdeaDTO(bi));
-        }
-
-        return resultList;
     }
 
     @Operation(summary = "Retrieve idea by UID", description = "Get a specific idea using its unique identifier")
@@ -99,37 +86,17 @@ public class IdeaController {
         }
     }
 
-    @Operation(summary = "Retrieve last N ideas", description = "Get the most recent ideas, limited by the specified number")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved last ideas",
-            content = @Content(schema = @Schema(implementation = IdeaDTO.class)))
-    @GetMapping("/retrieve/last/{numberOfElements}")
-    public List<IdeaDTO> retrieveLastIdea(
-            @Parameter(description = "Number of ideas to retrieve") @PathVariable int numberOfElements) {
-        List<Idea> ideaList = ideaService.retrieveLastIdea(numberOfElements);
-        List<IdeaDTO> resultList = new ArrayList<>();
+    @GetMapping("/retrieve")
+    public ResponseEntity<?> retrieveIdeaWithParameters(@RequestParam int start, @RequestParam int nbElement, @RequestParam String sortKey) {
 
-        for (Idea bi : ideaList) {
-            resultList.add(ideaMapper.mapIdeaToIdeaDTO(bi));
+        RetrieveIdeaDTO ideas = ideaService.getIdeasAfterDynamic(start, nbElement, sortKey);
+
+        if (ideas.getIdeas().isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
 
-        return resultList;
+        return ResponseEntity.ok(ideas);
     }
 
-    @Operation(summary = "Retrieve paginated ideas", description = "Get a paginated list of ideas")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved paginated ideas",
-            content = @Content(schema = @Schema(implementation = IdeaDTO.class)))
-    @GetMapping("/retrieve/{page}/{size}")
-    public ResponseEntity<List<IdeaDTO>> retrievePaginatedIdea(
-            @Parameter(description = "Page number (0-based)") @PathVariable int page,
-            @Parameter(description = "Number of items per page") @PathVariable int size) {
-        List<Idea> Idea = ideaService.retrievePaginatedIdea(page, size);
-        List<IdeaDTO> resultList = new ArrayList<>();
-
-        for (Idea bi : Idea) {
-            resultList.add(ideaMapper.mapIdeaToIdeaDTO(bi));
-        }
-
-        return new ResponseEntity<>(resultList, HttpStatus.OK);
-    }
 
 }

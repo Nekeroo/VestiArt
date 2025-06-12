@@ -1,5 +1,6 @@
 package com.project.vestiart.services.interfaces;
 
+import com.project.vestiart.dto.RetrieveIdeaDTO;
 import com.project.vestiart.models.Idea;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +24,5 @@ public interface IdeaService {
 
     Idea updateIdea(Idea idea);
 
-
+    RetrieveIdeaDTO getIdeasAfterDynamic(int start, int size, String orderType);
 }
