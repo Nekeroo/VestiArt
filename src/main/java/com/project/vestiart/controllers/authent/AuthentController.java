@@ -8,6 +8,7 @@ import com.project.vestiart.models.ErrorMessage;
 import com.project.vestiart.models.Role;
 import com.project.vestiart.models.User;
 import com.project.vestiart.services.UserServiceImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

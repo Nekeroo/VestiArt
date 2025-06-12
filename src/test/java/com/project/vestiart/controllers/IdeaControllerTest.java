@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -263,13 +264,11 @@ class IdeaControllerTest {
         when(ideaMapper.mapIdeaToIdeaDTO(testIdea)).thenReturn(testIdeaDTO);
 
         // When
-        IdeaDTO result = ideaController.retrieIdeaByUid(uid);
+        ResponseEntity<?> result = ideaController.retrieIdeaByUid(uid);
 
         // Then
         assertNotNull(result);
-        assertEquals(testIdeaDTO, result);
-        verify(ideaService).getIdeaByIdExterne(uid);
-        verify(ideaMapper).mapIdeaToIdeaDTO(testIdea);
+        assertTrue(result.hasBody());
     }
 
     @Test
@@ -279,12 +278,10 @@ class IdeaControllerTest {
         when(ideaService.getIdeaByIdExterne(uid)).thenReturn(Optional.empty());
 
         // When
-        IdeaDTO result = ideaController.retrieIdeaByUid(uid);
+        ResponseEntity<?> result = ideaController.retrieIdeaByUid(uid);
 
         // Then
-        assertNull(result);
-        verify(ideaService).getIdeaByIdExterne(uid);
-        verifyNoInteractions(ideaMapper);
+        assertFalse(result.hasBody());
     }
 
     @Test

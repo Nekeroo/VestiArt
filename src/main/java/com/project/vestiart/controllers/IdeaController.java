@@ -42,9 +42,14 @@ public class IdeaController {
     }
 
     @GetMapping("/retrieve/{uid}")
-    public IdeaDTO retrieIdeaByUid(@PathVariable String uid) {
+    public ResponseEntity<?> retrieIdeaByUid(@PathVariable String uid) {
         Optional<Idea> idea = ideaService.getIdeaByIdExterne(uid);
-        return idea.map(ideaMapper::mapIdeaToIdeaDTO).orElse(null);
+
+        if (idea.isEmpty()) {
+            return ResponseEntity.badRequest().body("Idea not found");
+        }
+
+        return ResponseEntity.ok(idea.get());
     }
 
     @PostMapping("/add")
@@ -55,13 +60,14 @@ public class IdeaController {
     }
 
     @DeleteMapping("/delete/{uid}")
-    public void remove(@PathVariable String uid) {
+    public ResponseEntity<?> remove(@PathVariable String uid) {
         Optional<Idea> idea = ideaService.getIdeaByIdExterne(uid);
         if (idea.isPresent()) {
             ideaService.removeIdea(idea.get());
             bucketService.deleteDocumentFromTheBucket(uid);
+            return ResponseEntity.noContent().build();
         } else {
-            throw new RuntimeException("Idea not found");
+            return ResponseEntity.badRequest().body("Idea not found");
         }
     }
 
