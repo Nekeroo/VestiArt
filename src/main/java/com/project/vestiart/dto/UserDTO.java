@@ -14,7 +14,7 @@ public class UserDTO {
 
     private String username;
     private String token;
-    private List<Role> roles;
+    private List<RoleDTO> roles;
 
     @Override
     public String toString() {

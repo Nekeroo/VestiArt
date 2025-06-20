@@ -7,11 +7,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserMapper {
 
+    private final RoleMapper roleMapper;
+
+    public UserMapper(RoleMapper roleMapper) {
+        this.roleMapper = roleMapper;
+    }
+
     public UserDTO mapUserToUserDTO(User user, String token) {
         return UserDTO.builder()
                 .username(user.getUsername())
                 .token(token)
-                .roles(user.getRoles())
+                .roles(roleMapper.mapRolesToRolesDTO(user.getRoles()))
                 .build();
     }
 

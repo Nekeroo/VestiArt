@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public enum TypeEnum {
 
-    MOVIE(0, "movie"),
-    SERIES(1, "series"),
-    ANIME(2, "anime");
+    MOVIE(0, "MOVIE"),
+    SERIES(1, "SERIES"),
+    ANIME(2, "ANIMED");
 
     private final int id;
     private final String type;
@@ -29,5 +29,14 @@ public enum TypeEnum {
             }
         }
         throw new IllegalArgumentException("No enum constant with id: " + id);
+    }
+
+    public static TypeEnum findTypeEnumByType(String type) {
+        for (TypeEnum typeEnum : TypeEnum.values()) {
+            if (typeEnum.getType().equalsIgnoreCase(type)) {
+                return typeEnum;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant with type: " + type);
     }
 }

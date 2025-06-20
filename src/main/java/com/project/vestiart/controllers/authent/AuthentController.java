@@ -63,10 +63,10 @@ public class AuthentController {
 
             List<String> roles = userService.getUserRoles(user);
 
-            // Create security token for user
             String token = jwtTokenProvider.generateToken(userName, roles);
 
-            return ResponseEntity.ok(new AuthResponseDTO(userName, token, roles));
+            UserDTO userDTO = userMapper.mapUserToUserDTO(user, token);
+            return ResponseEntity.ok().body(userDTO);
         } catch (AuthenticationException e) {
             return ResponseEntity.badRequest().body(Message.builder().content("Invalid username or password").build());
         }

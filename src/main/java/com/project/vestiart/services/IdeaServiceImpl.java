@@ -26,7 +26,6 @@ public class IdeaServiceImpl implements IdeaService {
 
     @PersistenceContext
     private EntityManager em;
-
     private final IdeaRepository ideaRepository;
     private final IdeaMapper ideaMapper;
 
@@ -88,12 +87,12 @@ public class IdeaServiceImpl implements IdeaService {
         return Idea;
     }
 
-    public RetrieveIdeaDTO getIdeasAfterDynamic(int start, int size, String orderType)
-    {
-        int page = start / size;
-        Pageable pageRequest = PageRequest.of(page, size, Sort.by(orderType));
-
-        List<Idea> ideas = ideaRepository.findAll(pageRequest);
+    public RetrieveIdeaDTO getIdeasAfterDynamic(int start, int size, String orderType) {
+        String jpql = "SELECT i FROM Idea i ORDER BY i." + orderType;
+        List<Idea> ideas = em.createQuery(jpql, Idea.class)
+                .setFirstResult(start)
+                .setMaxResults(size)
+                .getResultList();
 
         List<IdeaDTO> ideasDTO = ideas.stream().map(ideaMapper::mapIdeaToIdeaDTO).toList();
 

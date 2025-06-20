@@ -57,16 +57,6 @@ public class IdeaController {
         return ResponseEntity.ok(idea.get());
     }
 
-    @Operation(summary = "Add a new idea", description = "Create a new idea in the system")
-    @ApiResponse(responseCode = "200", description = "Idea successfully created",
-            content = @Content(schema = @Schema(implementation = IdeaDTO.class)))
-    @PostMapping("/add")
-    public IdeaDTO addIdea(@Parameter(description = "Idea details") @RequestBody IdeaDTO IdeaDTO) {
-        Idea idea = ideaMapper.mapIdeaDTOToIdea(IdeaDTO);
-        ideaService.saveIdea(idea);
-        return IdeaDTO;
-    }
-
     @Operation(summary = "Delete an idea", description = "Remove an idea from the system by its UID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Idea successfully deleted"),
@@ -104,7 +94,10 @@ public class IdeaController {
         RetrieveIdeaDTO ideas = ideaService.getIdeasAfterDynamic(start, nbElement, sortKey);
 
         if (ideas.getIdeas().isEmpty()) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().body(RetrieveIdeaDTO.builder()
+                    .ideas(new ArrayList<>())
+                    .nextKey(null)
+                    .build());
         }
 
         return ResponseEntity.ok(ideas);

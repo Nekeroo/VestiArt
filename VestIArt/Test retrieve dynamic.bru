@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: http://localhost:8080/idea/retrieve?sortKey=dateCreate&after=2025-06-12T14:23:00&nbElement=10
+  url: http://localhost:8080/idea/retrieve?start=3&nbElement=10&sortKey=dateCreate
   body: none
   auth: inherit
 }
 
 params:query {
-  sortKey: dateCreate
-  after: 2025-06-12T14:23:00
+  start: 3
   nbElement: 10
+  sortKey: dateCreate
 }
