@@ -5,6 +5,7 @@ import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.dto.PdfGenerationResponse;
 import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.models.Idea;
+import com.project.vestiart.models.PdfInfos;
 import com.project.vestiart.services.AsyncService;
 import com.project.vestiart.services.BucketService;
 import com.project.vestiart.services.interfaces.IdeaService;
@@ -29,6 +30,9 @@ import java.util.zip.ZipOutputStream;
 @RequestMapping("/pdf")
 public class PdfController {
 
+    // TODO : SE N'EST PLUS UN CONTROLLER MAIS UN SERVICE !
+
+
     private final PdfService pdfService;
     private final BucketService bucketService;
     private final AsyncService asyncService;
@@ -42,35 +46,20 @@ public class PdfController {
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<?> generatePdf(@RequestBody List<IdeaDTO> listIdeaDTOs) throws IOException {
-        List<CompletableFuture<String>> futures = listIdeaDTOs.stream()
-                .map(input -> asyncService.runAsync(() -> {
-                    try {
-                        BucketInfos bucketInfos;
-                        byte[] pdfBytes = pdfService.generatePdf(input);
-                        bucketInfos = bucketService.uploadFileFromGeneration(input.tag1(), input.tag2(), pdfBytes, ".pdf");
+    public PdfInfos generatePdf(Idea idea) throws IOException {
+        try {
+            BucketInfos bucketInfos;
+            byte[] pdfBytes = pdfService.generatePdf(idea);
+            bucketInfos = bucketService.uploadFileFromGeneration(idea.getTag1(), idea.getTag2(), pdfBytes, ".pdf");
 
-                        Optional<Idea> idea = ideaService.getIdeaByIdExterne(input.idExterneImage());
-
-                        System.out.println(bucketInfos.getUrl());
-
-                        idea.ifPresent(value -> value.setIdExternePdf(bucketInfos.getIdExterne()));
-                        idea.ifPresent(value -> value.setPdf(bucketInfos.getUrl()));
-
-                        ideaService.updateIdea(idea.get());
-
-                        return bucketInfos.getUrl();
-                    } catch (DocumentException | IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }))
-                .toList();
-
-        List<String> listPDF = futures.stream()
-                .map(CompletableFuture::join)
-                .toList();
-
-        return ResponseEntity.ok().body(PdfGenerationResponse.builder().pdfs(listPDF).build());
+            return PdfInfos.builder()
+                    .idExternePdf(bucketInfos.getIdExterne())
+                    .url(bucketInfos.getUrl())
+                    .build();
+            
+        } catch (DocumentException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

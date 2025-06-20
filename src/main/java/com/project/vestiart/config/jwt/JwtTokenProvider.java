@@ -1,4 +1,4 @@
-package com.project.vestiart.config;
+package com.project.vestiart.config.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

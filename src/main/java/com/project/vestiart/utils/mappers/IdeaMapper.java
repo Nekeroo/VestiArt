@@ -18,6 +18,7 @@ public class IdeaMapper {
                 .tag2(idea.getTag2())
                 .type(idea.getType())
                 .imageUrl(idea.getImage())
+                .pdfUrl(idea.getPdf())
                 .dateCreate(idea.getDateCreate())
                 .build();
     }
@@ -30,6 +31,7 @@ public class IdeaMapper {
                 .idExterneImage(ideaDTO.idExterneImage())
                 .idExternePdf(ideaDTO.idExternePdf())
                 .image(ideaDTO.imageUrl())
+                .pdf(ideaDTO.pdfUrl())
                 .tag1(ideaDTO.tag1())
                 .tag2(ideaDTO.tag2())
                 .type(ideaDTO.type())

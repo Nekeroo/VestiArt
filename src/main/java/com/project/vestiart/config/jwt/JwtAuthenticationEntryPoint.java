@@ -1,4 +1,4 @@
-package com.project.vestiart.config;
+package com.project.vestiart.config.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

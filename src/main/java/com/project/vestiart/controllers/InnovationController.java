@@ -6,6 +6,7 @@ import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.models.Idea;
 import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.input.RequestInput;
+import com.project.vestiart.models.PdfInfos;
 import com.project.vestiart.services.AsyncService;
 import com.project.vestiart.services.IdeaServiceImpl;
 import com.project.vestiart.services.OpenAIServiceImpl;
@@ -72,10 +73,17 @@ public class InnovationController {
                 .type(TypeEnum.findTypeEnumByType(input.getType()))
                 .build();
 
-        ideaService.saveIdea(idea);
         RequestInput inputMapped = requestInputMapper.mapRequestInputDTOintiRequestInput(input);
         inputMapped.setIdea(idea);
+        ideaService.saveIdea(idea);
         requestInputService.saveRequestInput(inputMapped);
+
+        PdfInfos pdfInfos = pdfController.generatePdf(idea);
+
+        idea.setIdExternePdf(pdfInfos.getIdExternePdf());
+        idea.setPdf(pdfInfos.getUrl());
+
+        ideaService.updateIdea(idea);
 
         return ideaMapper.mapIdeaToIdeaDTO(idea);
     }
@@ -93,7 +101,6 @@ public class InnovationController {
                 }))
                 .toList();
 
-        // TODO : Need to use GeneratePDF during the Idea creation
 
         return futures.stream()
                 .map(CompletableFuture::join)

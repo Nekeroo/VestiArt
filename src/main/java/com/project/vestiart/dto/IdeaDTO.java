@@ -15,4 +15,7 @@ public record IdeaDTO(
         String tag1,
         String tag2,
         LocalDateTime dateCreate,
+
+        String pdfUrl,
+
         TypeEnum type) { }

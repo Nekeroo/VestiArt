@@ -7,7 +7,7 @@ public enum TypeEnum {
 
     MOVIE(0, "MOVIE"),
     SERIES(1, "SERIES"),
-    ANIME(2, "ANIMED");
+    ANIME(2, "ANIME");
 
     private final int id;
     private final String type;
