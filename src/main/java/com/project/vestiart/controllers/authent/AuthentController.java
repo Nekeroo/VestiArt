@@ -1,7 +1,6 @@
 package com.project.vestiart.controllers.authent;
 
-import com.project.vestiart.config.JwtTokenProvider;
-import com.project.vestiart.dto.AuthResponseDTO;
+import com.project.vestiart.config.jwt.JwtTokenProvider;
 import com.project.vestiart.dto.UserDTO;
 import com.project.vestiart.input.LoginDTO;
 import com.project.vestiart.input.RegisterDTO;
@@ -26,9 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Key;
-import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController

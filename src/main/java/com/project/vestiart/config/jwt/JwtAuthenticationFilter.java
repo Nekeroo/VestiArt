@@ -1,6 +1,5 @@
 package com.project.vestiart.config.jwt;
 
-import com.project.vestiart.config.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
