@@ -1,6 +1,6 @@
-package com.project.vestiart.services;
+package com.project.vestiart.services.database;
 
-import com.project.vestiart.input.RequestInput;
+import com.project.vestiart.models.RequestInput;
 import com.project.vestiart.repositories.RequestInputRepository;
 import org.springframework.stereotype.Service;
 

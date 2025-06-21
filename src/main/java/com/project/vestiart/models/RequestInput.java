@@ -1,6 +1,5 @@
-package com.project.vestiart.input;
+package com.project.vestiart.models;
 
-import com.project.vestiart.models.Idea;
 import jakarta.persistence.*;
 import lombok.*;
 

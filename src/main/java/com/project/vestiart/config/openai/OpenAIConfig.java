@@ -1,4 +1,4 @@
-package com.project.vestiart.config;
+package com.project.vestiart.config.openai;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

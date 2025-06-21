@@ -1,8 +1,8 @@
 package com.project.vestiart.utils.mappers;
 
-import com.project.vestiart.dto.RequestInputDTO;
+import com.project.vestiart.input.RequestInputDTO;
 import com.project.vestiart.enums.TypeEnum;
-import com.project.vestiart.input.RequestInput;
+import com.project.vestiart.models.RequestInput;
 import org.springframework.stereotype.Service;
 
 @Service

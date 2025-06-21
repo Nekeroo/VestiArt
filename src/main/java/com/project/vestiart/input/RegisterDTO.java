@@ -1,12 +1,12 @@
 package com.project.vestiart.input;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Builder
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterDTO {
 
     private String username;

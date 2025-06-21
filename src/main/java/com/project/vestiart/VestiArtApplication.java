@@ -10,7 +10,7 @@ public class VestiArtApplication {
         SpringApplication.run(VestiArtApplication.class, args);
     }
 
-    // TODO : User - Récupérer ses propres créations
+    // TODO : User - Récupérer ses propres créations --> In progess (Besoin d'associer l'USER dans le modèle Idea)
     // TODO : User - Ajouter un système de like (PS : Ajouter une table de jointure id_user, id_idea)
     // TODO : Admin - éditer un user
     // TODO : Admin - Avoir plus de contrôles sur les créations

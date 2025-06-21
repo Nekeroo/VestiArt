@@ -1,8 +1,8 @@
 package com.project.vestiart.services;
 
-import com.project.vestiart.dto.RequestInputDTO;
-import com.project.vestiart.input.RequestInput;
+import com.project.vestiart.input.RequestInputDTO;
 import com.project.vestiart.models.BucketInfos;
+import com.project.vestiart.services.database.BucketService;
 import com.project.vestiart.services.interfaces.OpenAIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,6 @@ public class OpenAIServiceImpl implements OpenAIService {
     public BucketInfos getImageFromResponseOpenAi(RequestInputDTO input, String prompt) throws URISyntaxException {
 
         ImageResponse response = this.createImage(prompt);
-        LOGGER.info("Image {}", response);
 
         Image image = response.getResult().getOutput();
 

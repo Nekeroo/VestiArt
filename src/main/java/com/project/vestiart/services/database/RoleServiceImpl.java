@@ -1,4 +1,4 @@
-package com.project.vestiart.services;
+package com.project.vestiart.services.database;
 
 import com.project.vestiart.models.Role;
 import com.project.vestiart.repositories.RoleRepository;
