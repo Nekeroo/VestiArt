@@ -76,6 +76,7 @@ public class InnovationServiceImpl {
                 .map(CompletableFuture::join)
                 .toList();
     }
+
     private String buildPromptText(RequestInputDTO input) {
         return PromptUtils.formatPromptRequest(
                 input.getPerson(),

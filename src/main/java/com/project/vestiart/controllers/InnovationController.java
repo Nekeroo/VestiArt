@@ -6,33 +6,48 @@ import com.project.vestiart.models.CustomUserDetails;
 import com.project.vestiart.models.Message;
 import com.project.vestiart.models.User;
 import com.project.vestiart.services.InnovationServiceImpl;
-import com.project.vestiart.services.interfaces.JwtService;
 import com.project.vestiart.services.interfaces.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/innovation")
+@Tag(name = "Innovation", description = "APIs for creating and managing fashion innovations")
 public class InnovationController {
 
     private final InnovationServiceImpl innovationService;
-    private final JwtService jwtService;
     private final UserService userService;
 
-    public InnovationController(InnovationServiceImpl innovationService, JwtService jwtService, UserService userService) {
+    public InnovationController(InnovationServiceImpl innovationService, UserService userService) {
         this.innovationService = innovationService;
-        this.jwtService = jwtService;
         this.userService = userService;
     }
 
+    @Operation(summary = "Create multiple ideas", description = "Generate multiple fashion innovation ideas based on the provided inputs",
+              security = { @SecurityRequirement(name = "bearer-jwt") })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ideas created successfully",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = IdeaDTO.class)))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - authentication required",
+                    content = @Content(schema = @Schema(implementation = Message.class)))
+    })
     @PostMapping("/create")
     public ResponseEntity<?> createMultipleIdeasFromRequest(
+            @Parameter(description = "List of input specifications for idea generation", required = true)
             @RequestBody List<RequestInputDTO> inputs,
+            @Parameter(description = "Authenticated user details")
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         if (userDetails == null) {

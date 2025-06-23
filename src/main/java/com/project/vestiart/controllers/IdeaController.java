@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -143,11 +144,16 @@ public class IdeaController {
         return ResponseEntity.ok(ideas);
     }
 
+        @Operation(summary = "Retrieve ideas by type", description = "Get a paginated list of ideas filtered by the specified type")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ideas successfully retrieved",
+                    content = @Content(schema = @Schema(implementation = RetrieveIdeaDTO.class)))
+    })
     @GetMapping("/retrieve/type")
     public ResponseEntity<?> retrieveIdeaFromType(
             @Parameter(description = "Starting index for pagination") @RequestParam int start,
             @Parameter(description = "Number of elements to retrieve") @RequestParam int nbElement,
-            @Parameter(description = "Key to sort the ideas by") @RequestParam String type) {
+            @Parameter(description = "Type of ideas to filter by") @RequestParam String type) {
 
         RetrieveIdeaDTO ideas = ideaService.getIdeaFromType(start, nbElement, type);
 
@@ -162,12 +168,19 @@ public class IdeaController {
     }
 
 
-    // AUTHENT
+    @Operation(summary = "Retrieve user's ideas", description = "Get a paginated list of ideas created by the authenticated user",
+              security = { @SecurityRequirement(name = "bearer-jwt") })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User's ideas successfully retrieved",
+                    content = @Content(schema = @Schema(implementation = RetrieveIdeaDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - authentication required",
+                    content = @Content(schema = @Schema(implementation = Message.class)))
+    })
     @GetMapping("/retrieve/mine")
     public ResponseEntity<?> retrieveMyIdeas(
             @Parameter(description = "Starting index for pagination") @RequestParam int start,
             @Parameter(description = "Number of elements to retrieve") @RequestParam int nbElement,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @Parameter(description = "Authenticated user details") @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());

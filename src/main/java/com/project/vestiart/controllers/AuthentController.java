@@ -11,6 +11,13 @@ import com.project.vestiart.models.User;
 import com.project.vestiart.services.database.UserServiceImpl;
 import com.project.vestiart.utils.mappers.UserMapper;
 import io.jsonwebtoken.JwtException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,6 +35,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication", description = "APIs for user authentication, registration and user information retrieval")
 public class AuthentController {
 
     private final AuthenticationManager authenticationManager;
@@ -45,6 +53,13 @@ public class AuthentController {
         this.userMapper = userMapper;
     }
 
+    @Operation(summary = "User login", description = "Authenticate a user with username and password to obtain a JWT token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully authenticated",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid credentials",
+                    content = @Content(schema = @Schema(implementation = Message.class)))
+    })
     @PostMapping("/api/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDto) {
         try {
@@ -67,6 +82,13 @@ public class AuthentController {
         }
     }
 
+    @Operation(summary = "User registration", description = "Register a new user account and authenticate the user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User successfully registered",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Username already exists",
+                    content = @Content(schema = @Schema(implementation = Message.class)))
+    })
     @PostMapping("/api/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterDTO userInfos) {
 
@@ -86,8 +108,17 @@ public class AuthentController {
         return ResponseEntity.ok().body(userDTO);
     }
 
+    @Operation(summary = "Get current user information", description = "Retrieves the authenticated user's profile information using the JWT token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User information retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing token",
+                    content = @Content(schema = @Schema(implementation = Message.class)))
+    })
     @GetMapping("/me")
-    public ResponseEntity<?> me(@AuthenticationPrincipal CustomUserDetails userDetails, HttpServletRequest request) {
+    public ResponseEntity<?> me(
+            @Parameter(description = "Authenticated user details") @AuthenticationPrincipal CustomUserDetails userDetails, 
+            @Parameter(description = "HTTP request containing the authorization header") HttpServletRequest request) {
 
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
