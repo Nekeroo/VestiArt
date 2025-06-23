@@ -1,8 +1,9 @@
-package com.project.vestiart.services;
+package com.project.vestiart.services.database;
 
 import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.dto.RetrieveIdeaDTO;
 import com.project.vestiart.models.Idea;
+import com.project.vestiart.models.User;
 import com.project.vestiart.repositories.IdeaRepository;
 import com.project.vestiart.services.interfaces.IdeaService;
 import com.project.vestiart.utils.mappers.IdeaMapper;
@@ -95,6 +96,21 @@ public class IdeaServiceImpl implements IdeaService {
                 .getResultList();
 
         List<IdeaDTO> ideasDTO = ideas.stream().map(ideaMapper::mapIdeaToIdeaDTO).toList();
+
+        return RetrieveIdeaDTO.builder()
+                .ideas(ideasDTO)
+                .nextKey(start + ideas.size())
+                .build();
+    }
+
+    public RetrieveIdeaDTO getIdeasFromIdUser(long idUser, int start, int size) {
+        String jpql = "SELECT i FROM Idea i WHERE i.user.id = " + idUser;
+        List<Idea> ideas = em.createQuery(jpql, Idea.class)
+                .setFirstResult(start)
+                .setMaxResults(size)
+                .getResultList();
+
+        List<IdeaDTO> ideasDTO = ideas.stream().map(ideaMapper::mapIdeaToIdeaDTO).collect(Collectors.toList());
 
         return RetrieveIdeaDTO.builder()
                 .ideas(ideasDTO)

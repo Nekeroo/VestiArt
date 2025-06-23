@@ -14,7 +14,6 @@ public class BucketConfig {
     @Bean
     @Qualifier("bucketWebClient")
     public WebClient bucketWebClient(@Value("${bucket.key}") String key) {
-        System.out.println("Bucket Key = " + key);
         return WebClient.builder()
                 .baseUrl("http://141.94.115.201")
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + key)

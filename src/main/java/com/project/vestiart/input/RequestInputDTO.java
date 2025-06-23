@@ -1,4 +1,4 @@
-package com.project.vestiart.dto;
+package com.project.vestiart.input;
 
 
 import lombok.*;

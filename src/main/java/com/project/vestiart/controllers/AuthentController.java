@@ -1,4 +1,4 @@
-package com.project.vestiart.controllers.authent;
+package com.project.vestiart.controllers;
 
 import com.project.vestiart.config.jwt.JwtTokenProvider;
 import com.project.vestiart.dto.UserDTO;
@@ -7,7 +7,9 @@ import com.project.vestiart.input.RegisterDTO;
 import com.project.vestiart.models.Message;
 import com.project.vestiart.models.Role;
 import com.project.vestiart.models.User;
-import com.project.vestiart.services.UserServiceImpl;
+import com.project.vestiart.services.JwtServiceImpl;
+import com.project.vestiart.services.database.UserServiceImpl;
+import com.project.vestiart.services.interfaces.JwtService;
 import com.project.vestiart.utils.mappers.UserMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -37,14 +39,17 @@ public class AuthentController {
     private final UserServiceImpl userService;
     private final UserMapper userMapper;
 
+    private final JwtService jwtService;
+
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public AuthentController(JwtTokenProvider jwtTokenProvider, UserServiceImpl userService, AuthenticationManager authenticationManager, UserMapper userMapper) {
+    public AuthentController(JwtTokenProvider jwtTokenProvider, UserServiceImpl userService, AuthenticationManager authenticationManager, UserMapper userMapper, JwtServiceImpl jwtService) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.userMapper = userMapper;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/api/login")
@@ -85,7 +90,6 @@ public class AuthentController {
         String token = jwtTokenProvider.generateToken(user.getUsername(), user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
 
         UserDTO userDTO = userMapper.mapUserToUserDTO(user, token);
-        System.out.println(userDTO);
         return ResponseEntity.ok().body(userDTO);
     }
 
@@ -99,18 +103,7 @@ public class AuthentController {
         try {
             String token = authorizationHeader.replace("Bearer ", "");
 
-            Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-
-            Jws<Claims> claimsJws = Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-
-            Claims claims = claimsJws.getBody();
-
-            String username = claims.getSubject();
-
-            User user = userService.getUser(username);
+            User user = jwtService.retrieveUserByToken(token);
 
             UserDTO userDTOREsult = userMapper.mapUserToUserDTO(user, token);
 

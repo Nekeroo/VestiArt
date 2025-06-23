@@ -2,9 +2,12 @@ package com.project.vestiart.controllers;
 
 import com.project.vestiart.dto.RetrieveIdeaDTO;
 import com.project.vestiart.models.Idea;
-import com.project.vestiart.dto.IdeaDTO;
-import com.project.vestiart.services.BucketService;
+import com.project.vestiart.models.Message;
+import com.project.vestiart.models.User;
+import com.project.vestiart.services.database.BucketService;
 import com.project.vestiart.services.interfaces.IdeaService;
+import com.project.vestiart.services.interfaces.JwtService;
+import com.project.vestiart.services.interfaces.UserService;
 import com.project.vestiart.utils.mappers.IdeaMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,10 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -32,18 +32,24 @@ public class IdeaController {
     private final BucketService bucketService;
     private final IdeaService ideaService;
 
-    public IdeaController(IdeaMapper ideaMapper, BucketService bucketService, IdeaService ideaService) {
+    private final JwtService jwtService;
+
+    private final UserService userService;
+
+    public IdeaController(IdeaMapper ideaMapper, BucketService bucketService, IdeaService ideaService, JwtService jwtService, UserService userService) {
         this.ideaService = ideaService;
         this.ideaMapper = ideaMapper;
         this.bucketService = bucketService;
+        this.jwtService = jwtService;
+        this.userService = userService;
     }
 
     @Operation(summary = "Retrieve idea by UID", description = "Get a specific idea using its unique identifier")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Idea found",
-                content = @Content(schema = @Schema(implementation = Idea.class))),
-        @ApiResponse(responseCode = "400", description = "Idea not found",
-                content = @Content(schema = @Schema(implementation = String.class)))
+            @ApiResponse(responseCode = "200", description = "Idea found",
+                    content = @Content(schema = @Schema(implementation = Idea.class))),
+            @ApiResponse(responseCode = "400", description = "Idea not found",
+                    content = @Content(schema = @Schema(implementation = String.class)))
     })
     @GetMapping("/retrieve/{uid}")
     public ResponseEntity<?> retrieIdeaByUid(
@@ -57,15 +63,22 @@ public class IdeaController {
         return ResponseEntity.ok(idea.get());
     }
 
+    // AUTHENT
     @Operation(summary = "Delete an idea", description = "Remove an idea from the system by its UID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Idea successfully deleted"),
-        @ApiResponse(responseCode = "400", description = "Idea not found",
-                content = @Content(schema = @Schema(implementation = String.class)))
+            @ApiResponse(responseCode = "204", description = "Idea successfully deleted"),
+            @ApiResponse(responseCode = "400", description = "Idea not found",
+                    content = @Content(schema = @Schema(implementation = String.class)))
     })
     @DeleteMapping("/delete/{uid}")
     public ResponseEntity<?> remove(
-            @Parameter(description = "Unique identifier of the idea to delete") @PathVariable String uid) {
+            @Parameter(description = "Unique identifier of the idea to delete") @PathVariable String uid,
+    @RequestHeader(name = "Authorization", required = false) String token) {
+
+        if (token == null || token.isEmpty() || !jwtService.isUserValid(token)) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
+        }
+
         Optional<Idea> idea = ideaService.getIdeaByIdExterne(uid);
         if (idea.isPresent()) {
             ideaService.removeIdea(idea.get());
@@ -76,7 +89,7 @@ public class IdeaController {
         }
     }
 
-    
+
     @Operation(summary = "Retrieve ideas with pagination and sorting",
             description = "Get a paginated list of ideas with dynamic sorting capability")
     @ApiResponses(value = {
@@ -101,6 +114,32 @@ public class IdeaController {
         }
 
         return ResponseEntity.ok(ideas);
+    }
+
+
+    // AUTHENT
+    @GetMapping("/retrieve/mine")
+    public ResponseEntity<?> retrieveMyIdeas(
+         @Parameter(description = "Starting index for pagination") @RequestParam int start,
+         @Parameter(description = "Number of elements to retrieve") @RequestParam int nbElement,
+         @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ") || !jwtService.isUserValid(authorizationHeader)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
+        }
+
+        User user = jwtService.retrieveUserByToken(authorizationHeader);
+
+        RetrieveIdeaDTO retrieveIdeaDTO = ideaService.getIdeasFromIdUser(user.getId(), start, nbElement);
+
+        if (retrieveIdeaDTO.getIdeas().isEmpty()) {
+            return ResponseEntity.ok().body(RetrieveIdeaDTO.builder()
+                    .ideas(new ArrayList<>())
+                    .nextKey(null)
+                    .build());
+        }
+
+        return ResponseEntity.ok(retrieveIdeaDTO);
     }
 
 

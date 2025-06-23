@@ -44,4 +44,8 @@ public class Idea {
     @Column(name = "date_create")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime dateCreate;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

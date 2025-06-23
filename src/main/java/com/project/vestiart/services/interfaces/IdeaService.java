@@ -25,4 +25,6 @@ public interface IdeaService {
     Idea updateIdea(Idea idea);
 
     RetrieveIdeaDTO getIdeasAfterDynamic(int start, int size, String orderType);
+
+    RetrieveIdeaDTO getIdeasFromIdUser(long idUser, int start, int size);
 }
