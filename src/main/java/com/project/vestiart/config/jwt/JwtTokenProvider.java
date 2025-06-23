@@ -29,7 +29,7 @@ public class JwtTokenProvider {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
 
-        long expMillis = nowMillis + 3600000; // Token expiration time
+        long expMillis = nowMillis + ( 3600 * 336 ); // Durée d'expiration du token : 2 semaines
         Date exp = new Date(expMillis);
 
         return Jwts.builder()
