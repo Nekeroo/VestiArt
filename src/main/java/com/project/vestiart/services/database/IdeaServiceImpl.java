@@ -89,7 +89,7 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     public RetrieveIdeaDTO getIdeasAfterDynamic(int start, int size, String orderType) {
-        String jpql = "SELECT i FROM Idea i ORDER DESC BY i." + orderType;
+        String jpql = "SELECT i FROM Idea i ORDER BY i." + orderType + " DESC";
         List<Idea> ideas = em.createQuery(jpql, Idea.class)
                 .setFirstResult(start)
                 .setMaxResults(size)
