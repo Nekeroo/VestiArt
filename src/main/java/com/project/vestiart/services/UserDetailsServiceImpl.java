@@ -1,5 +1,6 @@
 package com.project.vestiart.services;
 
+import com.project.vestiart.models.CustomUserDetails;
 import com.project.vestiart.models.Role;
 import com.project.vestiart.models.User;
 import com.project.vestiart.repositories.UserRepository;
@@ -31,12 +32,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
-        if (user == null) {
-            UsernameNotFoundException usernameNotFoundException = new UsernameNotFoundException("User : " + username + " | not found");
-            logger.error("Error check for user " + username, usernameNotFoundException);
-            throw usernameNotFoundException;
+
+        if (user==null) {
+            throw new UsernameNotFoundException(username);
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
+
+        return new CustomUserDetails(user);
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {

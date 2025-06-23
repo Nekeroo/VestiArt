@@ -1,12 +1,14 @@
 package com.project.vestiart.controllers;
 
+import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.dto.RetrieveIdeaDTO;
+import com.project.vestiart.models.CustomUserDetails;
 import com.project.vestiart.models.Idea;
 import com.project.vestiart.models.Message;
 import com.project.vestiart.models.User;
 import com.project.vestiart.services.database.BucketService;
+import com.project.vestiart.services.database.RequestInputService;
 import com.project.vestiart.services.interfaces.IdeaService;
-import com.project.vestiart.services.interfaces.JwtService;
 import com.project.vestiart.services.interfaces.UserService;
 import com.project.vestiart.utils.mappers.IdeaMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -32,16 +35,17 @@ public class IdeaController {
     private final BucketService bucketService;
     private final IdeaService ideaService;
 
-    private final JwtService jwtService;
-
     private final UserService userService;
 
-    public IdeaController(IdeaMapper ideaMapper, BucketService bucketService, IdeaService ideaService, JwtService jwtService, UserService userService) {
+    private final RequestInputService requestInputService;
+
+
+    public IdeaController(IdeaMapper ideaMapper, BucketService bucketService, IdeaService ideaService, UserService userService, RequestInputService requestInputService) {
         this.ideaService = ideaService;
         this.ideaMapper = ideaMapper;
         this.bucketService = bucketService;
-        this.jwtService = jwtService;
         this.userService = userService;
+        this.requestInputService = requestInputService;
     }
 
     @Operation(summary = "Retrieve idea by UID", description = "Get a specific idea using its unique identifier")
@@ -54,16 +58,17 @@ public class IdeaController {
     @GetMapping("/retrieve/{uid}")
     public ResponseEntity<?> retrieIdeaByUid(
             @Parameter(description = "Unique identifier of the idea") @PathVariable String uid) {
-        Optional<Idea> idea = ideaService.getIdeaByIdExterne(uid);
+        Optional<Idea> idea = ideaService.getIdeaByIdExternePdf(uid);
 
         if (idea.isEmpty()) {
             return ResponseEntity.badRequest().body("Idea not found");
         }
 
-        return ResponseEntity.ok(idea.get());
+        IdeaDTO ideaDTO = ideaMapper.mapIdeaToIdeaDTO(idea.get());
+
+        return ResponseEntity.ok(ideaDTO);
     }
 
-    // AUTHENT
     @Operation(summary = "Delete an idea", description = "Remove an idea from the system by its UID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Idea successfully deleted"),
@@ -73,20 +78,42 @@ public class IdeaController {
     @DeleteMapping("/delete/{uid}")
     public ResponseEntity<?> remove(
             @Parameter(description = "Unique identifier of the idea to delete") @PathVariable String uid,
-    @RequestHeader(name = "Authorization", required = false) String token) {
+            @AuthenticationPrincipal CustomUserDetails user) {
 
-        if (token == null || token.isEmpty() || !jwtService.isUserValid(token)) {
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Message.builder().content("Unauthorized").build());
         }
 
-        Optional<Idea> idea = ideaService.getIdeaByIdExterne(uid);
-        if (idea.isPresent()) {
-            ideaService.removeIdea(idea.get());
-            bucketService.deleteDocumentFromTheBucket(uid);
-            return ResponseEntity.noContent().build();
-        } else {
+        Optional<Idea> idea = ideaService.getIdeaByIdExternePdf(uid);
+
+
+        System.out.println(idea);
+        if (idea.isEmpty()) {
             return ResponseEntity.badRequest().body("Idea not found");
         }
+
+        Idea ideaEntity = idea.get();
+
+        boolean isAdmin = user.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ADMIN"));
+
+        if (!isAdmin) {
+            String currentUsername = user.getUsername();
+            User userFound = userService.getUser(currentUsername);
+            System.out.println(user);
+            if (ideaEntity.getUser().getId() != userFound.getId()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Message.builder().content("Access denied: not the idea owner").build());
+            }
+        }
+
+        requestInputService.deleteRequestInput(ideaEntity);
+        ideaService.removeIdea(ideaEntity);
+        bucketService.deleteDocumentFromTheBucket(ideaEntity.getIdExternePdf());
+        bucketService.deleteDocumentFromTheBucket(ideaEntity.getIdExterneImage());
+
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -122,13 +149,13 @@ public class IdeaController {
     public ResponseEntity<?> retrieveMyIdeas(
          @Parameter(description = "Starting index for pagination") @RequestParam int start,
          @Parameter(description = "Number of elements to retrieve") @RequestParam int nbElement,
-         @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ") || !jwtService.isUserValid(authorizationHeader)) {
+        if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
         }
 
-        User user = jwtService.retrieveUserByToken(authorizationHeader);
+        User user = userService.getUser(userDetails.getUsername());
 
         RetrieveIdeaDTO retrieveIdeaDTO = ideaService.getIdeasFromIdUser(user.getId(), start, nbElement);
 

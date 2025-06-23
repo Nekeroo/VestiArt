@@ -19,4 +19,5 @@ public interface IdeaRepository extends CrudRepository<Idea, Long> {
 
     List<Idea> findAll(Pageable pageable);
 
+    Optional<Idea> findByIdExternePdf(String idExternePdf);
 }

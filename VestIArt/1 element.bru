@@ -1,0 +1,25 @@
+meta {
+  name: 1 element
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:8080/innovation/create
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXBlcGUiLCJpYXQiOjE3NTA2NzA0MDAsImV4cCI6MTc1MDY3NDAwMCwicm9sZXMiOlsiVXNlciJdfQ.Ir4675yxLtL1flmavWXQXWVp3QJyIHyrUaR-J45MGVIZv8YYtyeE9x5CuVy6WZf0l6ZzUqLH1pBfxqalc71zJQ
+}
+
+body:json {
+  [
+    {
+      "person": "Ahh",
+      "reference": "ooe",
+      "type": "MOVIE"
+    }
+  ]
+}

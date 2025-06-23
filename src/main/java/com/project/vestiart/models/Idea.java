@@ -48,4 +48,22 @@ public class Idea {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Override
+    public String toString() {
+        return "Idea{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", idExterneImage='" + idExterneImage + '\'' +
+                ", idExternePdf='" + idExternePdf + '\'' +
+                ", image='" + image + '\'' +
+                ", pdf='" + pdf + '\'' +
+                ", tag1='" + tag1 + '\'' +
+                ", tag2='" + tag2 + '\'' +
+                ", type=" + type +
+                ", dateCreate=" + dateCreate +
+                ", user=" + user +
+                '}';
+    }
 }

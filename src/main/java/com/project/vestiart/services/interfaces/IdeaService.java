@@ -14,7 +14,7 @@ public interface IdeaService {
 
     void saveIdea(Idea idea);
 
-    Optional<Idea> getIdeaByIdExterne(String idExterne);
+    Optional<Idea> getIdeaByIdExternePdf(String idExternePdf);
 
     void removeIdea(Idea Idea);
 

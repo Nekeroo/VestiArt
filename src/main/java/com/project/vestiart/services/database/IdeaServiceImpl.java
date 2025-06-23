@@ -63,8 +63,8 @@ public class IdeaServiceImpl implements IdeaService {
         return ideaStored;
     }
 
-    public Optional<Idea> getIdeaByIdExterne(String idExterne){
-        return ideaRepository.findByidExterneImage(idExterne);
+    public Optional<Idea> getIdeaByIdExternePdf(String idExterne){
+        return ideaRepository.findByIdExternePdf(idExterne);
     }
 
     public void removeIdea(Idea Idea) {
@@ -89,7 +89,7 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     public RetrieveIdeaDTO getIdeasAfterDynamic(int start, int size, String orderType) {
-        String jpql = "SELECT i FROM Idea i ORDER BY i." + orderType;
+        String jpql = "SELECT i FROM Idea i ORDER DESC BY i." + orderType;
         List<Idea> ideas = em.createQuery(jpql, Idea.class)
                 .setFirstResult(start)
                 .setMaxResults(size)

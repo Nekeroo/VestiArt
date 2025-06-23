@@ -4,16 +4,12 @@ meta {
   seq: 3
 }
 
-post {
-  url: http://localhost:8080/innovation/create
+delete {
+  url: http://localhost:8080/idea/delete/6a805e7f-cad3-409b-875d-2d75d9b16234
   body: json
-  auth: none
+  auth: bearer
 }
 
-body:json {
-  [{
-    "person" : "Ahh",
-    "reference" : "ooe",
-    "type" : "MOVIE"
-  }]
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXBlcGUiLCJpYXQiOjE3NTA2NzAyNjMsImV4cCI6MTc1MDY3Mzg2Mywicm9sZXMiOlsiVXNlciJdfQ.RutJ6k6UNBtLhyg9d_zmUvoqNuyoMghjqAGva772Az0hLlPBo9FisGB2ZT3bN1MaqRw-7F2B1TFJVNwAg9yD_g
 }
