@@ -4,13 +4,11 @@ import com.project.vestiart.dto.RetrieveIdeaDTO;
 import com.project.vestiart.models.Idea;
 import com.project.vestiart.models.Message;
 import com.project.vestiart.models.User;
-import com.project.vestiart.services.JwtServiceImpl;
 import com.project.vestiart.services.database.BucketService;
 import com.project.vestiart.services.interfaces.IdeaService;
 import com.project.vestiart.services.interfaces.JwtService;
 import com.project.vestiart.services.interfaces.UserService;
 import com.project.vestiart.utils.mappers.IdeaMapper;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -65,6 +63,7 @@ public class IdeaController {
         return ResponseEntity.ok(idea.get());
     }
 
+    // AUTHENT
     @Operation(summary = "Delete an idea", description = "Remove an idea from the system by its UID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Idea successfully deleted"),
@@ -73,7 +72,13 @@ public class IdeaController {
     })
     @DeleteMapping("/delete/{uid}")
     public ResponseEntity<?> remove(
-            @Parameter(description = "Unique identifier of the idea to delete") @PathVariable String uid) {
+            @Parameter(description = "Unique identifier of the idea to delete") @PathVariable String uid,
+    @RequestHeader(name = "Authorization", required = false) String token) {
+
+        if (token == null || token.isEmpty() || !jwtService.isUserValid(token)) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
+        }
+
         Optional<Idea> idea = ideaService.getIdeaByIdExterne(uid);
         if (idea.isPresent()) {
             ideaService.removeIdea(idea.get());
@@ -111,27 +116,30 @@ public class IdeaController {
         return ResponseEntity.ok(ideas);
     }
 
+
+    // AUTHENT
     @GetMapping("/retrieve/mine")
     public ResponseEntity<?> retrieveMyIdeas(
          @Parameter(description = "Starting index for pagination") @RequestParam int start,
          @Parameter(description = "Number of elements to retrieve") @RequestParam int nbElement,
          @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ") || !jwtService.isUserValid(authorizationHeader)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
         }
 
-        String token = authorizationHeader.replace("Bearer ", "");
+        User user = jwtService.retrieveUserByToken(authorizationHeader);
 
-        User user = jwtService.retrieveUserByToken(token);
-        // TODO : A finir
+        RetrieveIdeaDTO retrieveIdeaDTO = ideaService.getIdeasFromIdUser(user.getId(), start, nbElement);
 
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
+        if (retrieveIdeaDTO.getIdeas().isEmpty()) {
+            return ResponseEntity.ok().body(RetrieveIdeaDTO.builder()
+                    .ideas(new ArrayList<>())
+                    .nextKey(null)
+                    .build());
         }
 
-        RetrieveIdeaDTO ideas = ideaService.getIdeasFromIdUser(user.getId(), start, nbElement);
-        return ResponseEntity.ok("This feature is not yet implemented.");
+        return ResponseEntity.ok(retrieveIdeaDTO);
     }
 
 

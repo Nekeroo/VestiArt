@@ -41,11 +41,24 @@ public class JwtServiceImpl implements JwtService {
     }
 
     public User retrieveUserByToken(String token) {
+        if (token.contains("Bearer ")) {
+            token = token.replace("Bearer ", "");
+        }
+
         Claims claims = validateTokenAndGetClaims(token);
 
         String username = claims.getSubject();
 
         return userService.getUser(username);
+    }
+
+    public boolean isUserValid(String token) {
+
+        String tokenFiltered = token.replace("Bearer ", "");
+
+        User user = retrieveUserByToken(tokenFiltered);
+
+        return user != null;
     }
 
 }

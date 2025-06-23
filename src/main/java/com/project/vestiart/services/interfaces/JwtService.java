@@ -10,4 +10,6 @@ public interface JwtService {
     Claims validateTokenAndGetClaims(String token);
 
     User retrieveUserByToken(String token);
+
+    boolean isUserValid(String token);
 }

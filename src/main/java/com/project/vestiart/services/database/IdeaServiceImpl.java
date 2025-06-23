@@ -104,15 +104,8 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     public RetrieveIdeaDTO getIdeasFromIdUser(long idUser, int start, int size) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Idea> cq = cb.createQuery(Idea.class);
-        Root<Idea> ideaRoot = cq.from(Idea.class);
-
-        Join<Idea, User> userJoin = ideaRoot.join("user", JoinType.INNER);
-
-        cq.where(cb.equal(userJoin.get("id"), idUser));
-
-        List<Idea> ideas = em.createQuery(cq)
+        String jpql = "SELECT i FROM Idea i WHERE i.user.id = " + idUser;
+        List<Idea> ideas = em.createQuery(jpql, Idea.class)
                 .setFirstResult(start)
                 .setMaxResults(size)
                 .getResultList();

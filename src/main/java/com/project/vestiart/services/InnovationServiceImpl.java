@@ -2,11 +2,8 @@ package com.project.vestiart.services;
 
 import com.project.vestiart.input.RequestInputDTO;
 import com.project.vestiart.enums.TypeEnum;
-import com.project.vestiart.models.BucketInfos;
-import com.project.vestiart.models.Idea;
-import com.project.vestiart.models.PdfInfos;
+import com.project.vestiart.models.*;
 import com.project.vestiart.dto.IdeaDTO;
-import com.project.vestiart.models.RequestInput;
 import com.project.vestiart.services.database.IdeaServiceImpl;
 import com.project.vestiart.services.database.RequestInputService;
 import com.project.vestiart.utils.PromptUtils;
@@ -50,12 +47,12 @@ public class InnovationServiceImpl {
         this.pdfService = pdfService;
     }
 
-    public IdeaDTO createIdea(RequestInputDTO input) throws IOException, URISyntaxException {
+    public IdeaDTO createIdea(RequestInputDTO input, User user) throws IOException, URISyntaxException {
         String promptText = buildPromptText(input);
         String resultFromTheIdea = fetchIdeaDescription(promptText);
         BucketInfos bucketInfos = fetchImage(promptText, input);
 
-        Idea idea = buildIdeaEntity(input, resultFromTheIdea, bucketInfos);
+        Idea idea = buildIdeaEntity(input, resultFromTheIdea, bucketInfos, user);
         RequestInput requestInput = mapRequestInput(input, idea);
 
         persistIdeaAndRequestInput(idea, requestInput);
@@ -64,11 +61,11 @@ public class InnovationServiceImpl {
         return ideaMapper.mapIdeaToIdeaDTO(idea);
     }
 
-    public List<IdeaDTO> createMultipleIdeas(List<RequestInputDTO> inputs) {
+    public List<IdeaDTO> createMultipleIdeas(List<RequestInputDTO> inputs, User user) {
         return inputs.stream()
                 .map(input -> asyncService.runAsync(() -> {
                     try {
-                        return createIdea(input);
+                        return createIdea(input, user);
                     } catch (IOException | URISyntaxException e) {
                         throw new RuntimeException(e);
                     }
@@ -95,11 +92,12 @@ public class InnovationServiceImpl {
         return openAIService.getImageFromResponseOpenAi(input, promptImage);
     }
 
-    private Idea buildIdeaEntity(RequestInputDTO input, String description, BucketInfos bucketInfos) {
+    private Idea buildIdeaEntity(RequestInputDTO input, String description, BucketInfos bucketInfos, User user) {
         return Idea.builder()
                 .image(bucketInfos.getUrl())
                 .idExterneImage(bucketInfos.getIdExterne())
                 .description(description)
+                .user(user)
                 .title(input.getPerson() + " Collection")
                 .tag1(input.getPerson())
                 .tag2(input.getReference())

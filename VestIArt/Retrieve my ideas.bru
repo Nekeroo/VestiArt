@@ -1,0 +1,20 @@
+meta {
+  name: Retrieve my ideas
+  type: http
+  seq: 9
+}
+
+get {
+  url: http://localhost:8080/idea/retrieve/mine?start=0&nbElement=10
+  body: none
+  auth: bearer
+}
+
+params:query {
+  start: 0
+  nbElement: 10
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXBlcGUiLCJpYXQiOjE3NTA2NjQxMzEsImV4cCI6MTc1MDY2NzczMSwicm9sZXMiOlsiVXNlciJdfQ.iXm6CGlab2pXKsVbvbvg2RDWIPhJGUHfK8q_hZoSHegCEvoQJTGoO_X6eHzLIN9-TDNNfWvWItL2cNIzR4ThRw
+}
