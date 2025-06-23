@@ -143,6 +143,24 @@ public class IdeaController {
         return ResponseEntity.ok(ideas);
     }
 
+    @GetMapping("/retrieve/type")
+    public ResponseEntity<?> retrieveIdeaFromType(
+            @Parameter(description = "Starting index for pagination") @RequestParam int start,
+            @Parameter(description = "Number of elements to retrieve") @RequestParam int nbElement,
+            @Parameter(description = "Key to sort the ideas by") @RequestParam String type) {
+
+        RetrieveIdeaDTO ideas = ideaService.getIdeaFromType(start, nbElement, type);
+
+        if (ideas.getIdeas().isEmpty()) {
+            return ResponseEntity.ok().body(RetrieveIdeaDTO.builder()
+                    .ideas(new ArrayList<>())
+                    .nextKey(null)
+                    .build());
+        }
+
+        return ResponseEntity.ok(ideas);
+    }
+
 
     // AUTHENT
     @GetMapping("/retrieve/mine")

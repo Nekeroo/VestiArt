@@ -62,7 +62,7 @@ public class InnovationServiceImpl {
     }
 
     public List<IdeaDTO> createMultipleIdeas(List<RequestInputDTO> inputs, User user) {
-        return inputs.stream()
+        List<CompletableFuture<IdeaDTO>> futures = inputs.stream()
                 .map(input -> asyncService.runAsync(() -> {
                     try {
                         return createIdea(input, user);
@@ -70,6 +70,9 @@ public class InnovationServiceImpl {
                         throw new RuntimeException(e);
                     }
                 }))
+                .toList();
+
+        return futures.stream()
                 .map(CompletableFuture::join)
                 .toList();
     }

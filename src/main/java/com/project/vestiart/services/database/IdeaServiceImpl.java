@@ -118,4 +118,20 @@ public class IdeaServiceImpl implements IdeaService {
                 .build();
     }
 
+
+    public RetrieveIdeaDTO getIdeaFromType(int start, int size, String type) {
+        String jpql = "SELECT i FROM Idea i WHERE i.type = " + type;
+        List<Idea> ideas = em.createQuery(jpql, Idea.class)
+                .setFirstResult(start)
+                .setMaxResults(size)
+                .getResultList();
+
+        List<IdeaDTO> ideasDTO = ideas.stream().map(ideaMapper::mapIdeaToIdeaDTO).collect(Collectors.toList());
+
+        return RetrieveIdeaDTO.builder()
+                .ideas(ideasDTO)
+                .nextKey(start + ideas.size())
+                .build();
+    }
+
 }
