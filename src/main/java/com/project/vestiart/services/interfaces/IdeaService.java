@@ -29,4 +29,6 @@ public interface IdeaService {
     RetrieveIdeaDTO getIdeasFromIdUser(long idUser, int start, int size);
 
     RetrieveIdeaDTO getIdeaFromType(int start, int size, String type);
+
+    long countIdeas();
 }

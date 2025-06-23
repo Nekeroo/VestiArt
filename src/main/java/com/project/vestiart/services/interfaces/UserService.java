@@ -15,5 +15,5 @@ public interface UserService {
 
     User registerNewUserAccount(RegisterDTO user);
 
-
+    long countUsers();
 }

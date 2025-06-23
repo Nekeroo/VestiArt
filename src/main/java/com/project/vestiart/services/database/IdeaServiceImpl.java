@@ -134,4 +134,8 @@ public class IdeaServiceImpl implements IdeaService {
                 .build();
     }
 
+    public long countIdeas() {
+        return ideaRepository.count();
+    }
+
 }
