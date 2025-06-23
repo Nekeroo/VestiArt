@@ -96,7 +96,7 @@ public class IdeaController {
         Idea ideaEntity = idea.get();
 
         boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().equals("Admin"));
 
         if (!isAdmin) {
             String currentUsername = user.getUsername();
