@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 public enum TypeEnum {
 
     MOVIE(0, "MOVIE"),
-    SERIES(1, "SERIE"),
+    SERIE(1, "SERIE"),
     ANIME(2, "ANIME");
 
     private final int id;
