@@ -1,6 +1,8 @@
 package com.project.vestiart.enums;
 
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Getter
 public enum TypeEnum {
@@ -11,6 +13,8 @@ public enum TypeEnum {
 
     private final int id;
     private final String type;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TypeEnum.class);
 
     TypeEnum(int id, String type) {
         this.id = id;
@@ -37,6 +41,8 @@ public enum TypeEnum {
                 return typeEnum;
             }
         }
-        throw new IllegalArgumentException("No enum constant with type: " + type);
+
+        LOGGER.error("No enum constant with type: " + type);
+        return null;
     }
 }

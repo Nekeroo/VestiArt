@@ -157,7 +157,7 @@ public class IdeaController {
 
         RetrieveIdeaDTO ideas = ideaService.getIdeaFromType(start, nbElement, type);
 
-        if (ideas.getIdeas().isEmpty()) {
+        if (ideas == null || ideas.getIdeas().isEmpty()) {
             return ResponseEntity.ok().body(RetrieveIdeaDTO.builder()
                     .ideas(new ArrayList<>())
                     .nextKey(null)

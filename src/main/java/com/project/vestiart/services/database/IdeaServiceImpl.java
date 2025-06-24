@@ -2,6 +2,7 @@ package com.project.vestiart.services.database;
 
 import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.dto.RetrieveIdeaDTO;
+import com.project.vestiart.enums.TypeEnum;
 import com.project.vestiart.models.Idea;
 import com.project.vestiart.models.User;
 import com.project.vestiart.repositories.IdeaRepository;
@@ -120,18 +121,25 @@ public class IdeaServiceImpl implements IdeaService {
 
 
     public RetrieveIdeaDTO getIdeaFromType(int start, int size, String type) {
-        String jpql = "SELECT i FROM Idea i WHERE i.type = " + type;
-        List<Idea> ideas = em.createQuery(jpql, Idea.class)
-                .setFirstResult(start)
-                .setMaxResults(size)
-                .getResultList();
+        String jpql = "SELECT i FROM Idea i WHERE i.type = :type";
 
-        List<IdeaDTO> ideasDTO = ideas.stream().map(ideaMapper::mapIdeaToIdeaDTO).collect(Collectors.toList());
+        if (TypeEnum.findTypeEnumByType(type) != null) {
+            List<Idea> ideas = em.createQuery(jpql, Idea.class)
+                    .setParameter("type", TypeEnum.findTypeEnumByType(type))
+                    .setFirstResult(start)
+                    .setMaxResults(size)
+                    .getResultList();
 
-        return RetrieveIdeaDTO.builder()
-                .ideas(ideasDTO)
-                .nextKey(start + ideas.size())
-                .build();
+            List<IdeaDTO> ideasDTO = ideas.stream().map(ideaMapper::mapIdeaToIdeaDTO).collect(Collectors.toList());
+
+            return RetrieveIdeaDTO.builder()
+                    .ideas(ideasDTO)
+                    .nextKey(start + ideas.size())
+                    .build();
+        }
+        else {
+            return null;
+        }
     }
 
     public long countIdeas() {
