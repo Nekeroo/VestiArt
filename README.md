@@ -58,4 +58,4 @@ Pour cela, deux possibilités :
 
 Voici un exemple de configuration de lancement :
 
-![configuration](./src/main/resources/static/img.png)
+![configuration](./src/main/resources/img.png)
