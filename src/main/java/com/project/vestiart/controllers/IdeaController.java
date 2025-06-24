@@ -8,8 +8,8 @@ import com.project.vestiart.models.Message;
 import com.project.vestiart.models.User;
 import com.project.vestiart.services.database.BucketService;
 import com.project.vestiart.services.database.RequestInputService;
-import com.project.vestiart.services.interfaces.IdeaService;
-import com.project.vestiart.services.interfaces.UserService;
+import com.project.vestiart.services.interfaces.IIdeaService;
+import com.project.vestiart.services.interfaces.IUserService;
 import com.project.vestiart.utils.mappers.IdeaMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,18 +34,18 @@ public class IdeaController {
 
     private final IdeaMapper ideaMapper;
     private final BucketService bucketService;
-    private final IdeaService ideaService;
+    private final IIdeaService IIdeaService;
 
-    private final UserService userService;
+    private final IUserService IUserService;
 
     private final RequestInputService requestInputService;
 
 
-    public IdeaController(IdeaMapper ideaMapper, BucketService bucketService, IdeaService ideaService, UserService userService, RequestInputService requestInputService) {
-        this.ideaService = ideaService;
+    public IdeaController(IdeaMapper ideaMapper, BucketService bucketService, IIdeaService IIdeaService, IUserService IUserService, RequestInputService requestInputService) {
+        this.IIdeaService = IIdeaService;
         this.ideaMapper = ideaMapper;
         this.bucketService = bucketService;
-        this.userService = userService;
+        this.IUserService = IUserService;
         this.requestInputService = requestInputService;
     }
 
@@ -59,7 +59,7 @@ public class IdeaController {
     @GetMapping("/retrieve/{uid}")
     public ResponseEntity<?> retrieIdeaByUid(
             @Parameter(description = "Unique identifier of the idea") @PathVariable String uid) {
-        Optional<Idea> idea = ideaService.getIdeaByIdExternePdf(uid);
+        Optional<Idea> idea = IIdeaService.getIdeaByIdExternePdf(uid);
 
         if (idea.isEmpty()) {
             return ResponseEntity.badRequest().body("Idea not found");
@@ -86,7 +86,7 @@ public class IdeaController {
                     .body(Message.builder().content("Unauthorized").build());
         }
 
-        Optional<Idea> idea = ideaService.getIdeaByIdExternePdf(uid);
+        Optional<Idea> idea = IIdeaService.getIdeaByIdExternePdf(uid);
 
 
         System.out.println(idea);
@@ -101,7 +101,7 @@ public class IdeaController {
 
         if (!isAdmin) {
             String currentUsername = user.getUsername();
-            User userFound = userService.getUser(currentUsername);
+            User userFound = IUserService.getUser(currentUsername);
             System.out.println(user);
             if (ideaEntity.getUser().getId() != userFound.getId()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
@@ -110,7 +110,7 @@ public class IdeaController {
         }
 
         requestInputService.deleteRequestInput(ideaEntity);
-        ideaService.removeIdea(ideaEntity);
+        IIdeaService.removeIdea(ideaEntity);
         bucketService.deleteDocumentFromTheBucket(ideaEntity.getIdExternePdf());
         bucketService.deleteDocumentFromTheBucket(ideaEntity.getIdExterneImage());
 
@@ -132,7 +132,7 @@ public class IdeaController {
             @Parameter(description = "Number of elements to retrieve") @RequestParam int nbElement,
             @Parameter(description = "Key to sort the ideas by") @RequestParam String sortKey) {
 
-        RetrieveIdeaDTO ideas = ideaService.getIdeasAfterDynamic(start, nbElement, sortKey);
+        RetrieveIdeaDTO ideas = IIdeaService.getIdeasAfterDynamic(start, nbElement, sortKey);
 
         if (ideas.getIdeas().isEmpty()) {
             return ResponseEntity.ok().body(RetrieveIdeaDTO.builder()
@@ -155,7 +155,7 @@ public class IdeaController {
             @Parameter(description = "Number of elements to retrieve") @RequestParam int nbElement,
             @Parameter(description = "Type of ideas to filter by") @RequestParam String type) {
 
-        RetrieveIdeaDTO ideas = ideaService.getIdeaFromType(start, nbElement, type);
+        RetrieveIdeaDTO ideas = IIdeaService.getIdeaFromType(start, nbElement, type);
 
         if (ideas == null || ideas.getIdeas().isEmpty()) {
             return ResponseEntity.ok().body(RetrieveIdeaDTO.builder()
@@ -186,9 +186,9 @@ public class IdeaController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
         }
 
-        User user = userService.getUser(userDetails.getUsername());
+        User user = IUserService.getUser(userDetails.getUsername());
 
-        RetrieveIdeaDTO retrieveIdeaDTO = ideaService.getIdeasFromIdUser(user.getId(), start, nbElement);
+        RetrieveIdeaDTO retrieveIdeaDTO = IIdeaService.getIdeasFromIdUser(user.getId(), start, nbElement);
 
         if (retrieveIdeaDTO.getIdeas().isEmpty()) {
             return ResponseEntity.ok().body(RetrieveIdeaDTO.builder()

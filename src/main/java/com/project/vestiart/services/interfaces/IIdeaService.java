@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public interface IdeaService {
+public interface IIdeaService {
 
     List<Idea> retrieveAll();
 

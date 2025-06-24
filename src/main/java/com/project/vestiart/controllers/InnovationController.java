@@ -5,8 +5,8 @@ import com.project.vestiart.input.RequestInputDTO;
 import com.project.vestiart.models.CustomUserDetails;
 import com.project.vestiart.models.Message;
 import com.project.vestiart.models.User;
-import com.project.vestiart.services.InnovationServiceImpl;
-import com.project.vestiart.services.interfaces.UserService;
+import com.project.vestiart.services.InnovationService;
+import com.project.vestiart.services.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -27,12 +27,12 @@ import java.util.List;
 @Tag(name = "Innovation", description = "APIs for creating and managing fashion innovations")
 public class InnovationController {
 
-    private final InnovationServiceImpl innovationService;
-    private final UserService userService;
+    private final InnovationService innovationService;
+    private final IUserService IUserService;
 
-    public InnovationController(InnovationServiceImpl innovationService, UserService userService) {
+    public InnovationController(InnovationService innovationService, IUserService IUserService) {
         this.innovationService = innovationService;
-        this.userService = userService;
+        this.IUserService = IUserService;
     }
 
     @Operation(summary = "Create multiple ideas", description = "Generate multiple fashion innovation ideas based on the provided inputs",
@@ -54,7 +54,7 @@ public class InnovationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Message.builder().content("Unauthorized").build());
         }
 
-        User user = userService.getUser(userDetails.getUsername());
+        User user = IUserService.getUser(userDetails.getUsername());
 
         List<IdeaDTO> ideaDTOS = innovationService.createMultipleIdeas(inputs, user);
 

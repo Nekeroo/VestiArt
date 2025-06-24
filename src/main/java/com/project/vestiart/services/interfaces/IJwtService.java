@@ -5,7 +5,7 @@ import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface JwtService {
+public interface IJwtService {
 
     Claims validateTokenAndGetClaims(String token);
 

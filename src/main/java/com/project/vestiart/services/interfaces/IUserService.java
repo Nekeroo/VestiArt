@@ -1,13 +1,11 @@
 package com.project.vestiart.services.interfaces;
 
 import com.project.vestiart.input.RegisterDTO;
-import com.project.vestiart.models.Role;
 import com.project.vestiart.models.User;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface UserService {
+public interface IUserService {
 
     User getUser(String username);
 

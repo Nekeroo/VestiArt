@@ -4,7 +4,7 @@ import com.project.vestiart.input.RequestInputDTO;
 import com.project.vestiart.enums.TypeEnum;
 import com.project.vestiart.models.*;
 import com.project.vestiart.dto.IdeaDTO;
-import com.project.vestiart.services.database.IdeaServiceImpl;
+import com.project.vestiart.services.database.IdeaService;
 import com.project.vestiart.services.database.RequestInputService;
 import com.project.vestiart.utils.PromptUtils;
 import com.project.vestiart.utils.mappers.IdeaMapper;
@@ -19,25 +19,25 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class InnovationServiceImpl {
+public class InnovationService {
 
-    private final OpenAIServiceImpl openAIService;
-    private final IdeaServiceImpl ideaService;
+    private final OpenAiService openAIService;
+    private final IdeaService ideaService;
     private final RequestInputService requestInputService;
     private final IdeaMapper ideaMapper;
     private final AsyncService asyncService;
     private final RequestInputMapper requestInputMapper;
-    private final PdfServiceImpl pdfService;
+    private final PdfService pdfService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InnovationServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InnovationService.class);
 
-    public InnovationServiceImpl(OpenAIServiceImpl openAIService,
-                                 IdeaServiceImpl ideaService,
-                                 RequestInputService requestInputService,
-                                 IdeaMapper ideaMapper,
-                                 AsyncService asyncService,
-                                 RequestInputMapper requestInputMapper,
-                                 PdfServiceImpl pdfService) {
+    public InnovationService(OpenAiService openAIService,
+                             IdeaService ideaService,
+                             RequestInputService requestInputService,
+                             IdeaMapper ideaMapper,
+                             AsyncService asyncService,
+                             RequestInputMapper requestInputMapper,
+                             PdfService pdfService) {
         this.openAIService = openAIService;
         this.ideaService = ideaService;
         this.requestInputService = requestInputService;

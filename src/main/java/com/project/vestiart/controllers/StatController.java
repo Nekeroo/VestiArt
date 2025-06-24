@@ -1,8 +1,8 @@
 package com.project.vestiart.controllers;
 
 import com.project.vestiart.dto.StatDTO;
-import com.project.vestiart.services.interfaces.IdeaService;
-import com.project.vestiart.services.interfaces.UserService;
+import com.project.vestiart.services.interfaces.IIdeaService;
+import com.project.vestiart.services.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/stat")
 public class StatController {
 
-    private final UserService userService;
-    private final IdeaService ideaService;
+    private final IUserService IUserService;
+    private final IIdeaService IIdeaService;
 
-    public StatController(UserService userService, IdeaService ideaService) {
-        this.userService = userService;
-        this.ideaService = ideaService;
+    public StatController(IUserService IUserService, IIdeaService IIdeaService) {
+        this.IUserService = IUserService;
+        this.IIdeaService = IIdeaService;
     }
 
     @Operation(summary = "retrieve the stats of the app")
@@ -31,8 +31,8 @@ public class StatController {
     })
     @GetMapping("/retrieve")
     public ResponseEntity<?> stat() {
-        long nbUsers = userService.countUsers();
-        long nbIdeas = ideaService.countIdeas();
+        long nbUsers = IUserService.countUsers();
+        long nbIdeas = IIdeaService.countIdeas();
         return ResponseEntity.ok(StatDTO.builder()
                 .nbUsers(nbUsers)
                 .nbCreations(nbIdeas)

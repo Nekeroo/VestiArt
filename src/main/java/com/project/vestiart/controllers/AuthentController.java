@@ -8,7 +8,7 @@ import com.project.vestiart.models.CustomUserDetails;
 import com.project.vestiart.models.Message;
 import com.project.vestiart.models.Role;
 import com.project.vestiart.models.User;
-import com.project.vestiart.services.database.UserServiceImpl;
+import com.project.vestiart.services.database.UserService;
 import com.project.vestiart.utils.mappers.UserMapper;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,13 +40,13 @@ public class AuthentController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserServiceImpl userService;
+    private final UserService userService;
     private final UserMapper userMapper;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public AuthentController(JwtTokenProvider jwtTokenProvider, UserServiceImpl userService, AuthenticationManager authenticationManager, UserMapper userMapper) {
+    public AuthentController(JwtTokenProvider jwtTokenProvider, UserService userService, AuthenticationManager authenticationManager, UserMapper userMapper) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.authenticationManager = authenticationManager;

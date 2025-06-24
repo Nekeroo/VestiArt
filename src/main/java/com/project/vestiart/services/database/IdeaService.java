@@ -4,19 +4,15 @@ import com.project.vestiart.dto.IdeaDTO;
 import com.project.vestiart.dto.RetrieveIdeaDTO;
 import com.project.vestiart.enums.TypeEnum;
 import com.project.vestiart.models.Idea;
-import com.project.vestiart.models.User;
-import com.project.vestiart.repositories.IdeaRepository;
-import com.project.vestiart.services.interfaces.IdeaService;
+import com.project.vestiart.repositories.IIdeaRepository;
+import com.project.vestiart.services.interfaces.IIdeaService;
 import com.project.vestiart.utils.mappers.IdeaMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,20 +20,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class IdeaServiceImpl implements IdeaService {
+public class IdeaService implements IIdeaService {
 
     @PersistenceContext
     private EntityManager em;
-    private final IdeaRepository ideaRepository;
+    private final IIdeaRepository iidea;
     private final IdeaMapper ideaMapper;
 
-    public IdeaServiceImpl(IdeaRepository ideaRepository, IdeaMapper ideaMapper) {
-        this.ideaRepository = ideaRepository;
+    public IdeaService(IIdeaRepository iidea, IdeaMapper ideaMapper) {
+        this.iidea = iidea;
         this.ideaMapper = ideaMapper;
     }
 
     public List<Idea> retrieveAll() {
-        Iterable<Idea> ideaList = ideaRepository.findAll();
+        Iterable<Idea> ideaList = iidea.findAll();
 
         List<Idea> ideas    = new ArrayList<>();
 
@@ -50,39 +46,39 @@ public class IdeaServiceImpl implements IdeaService {
 
     public void saveIdea(Idea idea) {
         idea.setDateCreate(LocalDateTime.now());
-        ideaRepository.save(idea);
+        iidea.save(idea);
     }
 
     public Idea updateIdea(Idea idea) {
-        Idea ideaStored = ideaRepository.findById(idea.getId()).get();
+        Idea ideaStored = iidea.findById(idea.getId()).get();
 
         ideaStored.setIdExternePdf(idea.getIdExternePdf());
         ideaStored.setPdf(idea.getPdf());
 
-        ideaRepository.save(ideaStored);
+        iidea.save(ideaStored);
 
         return ideaStored;
     }
 
     public Optional<Idea> getIdeaByIdExternePdf(String idExterne){
-        return ideaRepository.findByIdExternePdf(idExterne);
+        return iidea.findByIdExternePdf(idExterne);
     }
 
     public void removeIdea(Idea Idea) {
-        ideaRepository.delete(Idea);
+        iidea.delete(Idea);
     }
 
     public List<Idea> retrieveLastIdea(int numberOfElements) {
         Pageable pageRequest = PageRequest.of(0, numberOfElements);
-        List<Idea> Idea = ideaRepository.findAllByOrderByDateCreateDesc(pageRequest);
+        List<Idea> Idea = iidea.findAllByOrderByDateCreateDesc(pageRequest);
         return Idea;
     }
 
     public List<Idea> retrievePaginatedIdea(int page, int size) {
         List<Idea> Idea = new ArrayList<>();
-        Iterable<Idea> allIdea = ideaRepository.findAll();
+        Iterable<Idea> allIdea = iidea.findAll();
         int start = page * size;
-        int end = Math.min(start + size, (int) ideaRepository.count());
+        int end = Math.min(start + size, (int) iidea.count());
         for (int i = start; i < end; i++) {
             Idea.add((Idea) allIdea);
         }
@@ -143,7 +139,7 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     public long countIdeas() {
-        return ideaRepository.count();
+        return iidea.count();
     }
 
 }

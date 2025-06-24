@@ -3,7 +3,7 @@ package com.project.vestiart.services;
 import com.project.vestiart.input.RequestInputDTO;
 import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.services.database.BucketService;
-import com.project.vestiart.services.interfaces.OpenAIService;
+import com.project.vestiart.services.interfaces.IOpenAIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -25,14 +25,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Service
-public class OpenAIServiceImpl implements OpenAIService {
+public class OpenAiService implements IOpenAIService {
 
     private final OpenAiChatModel chatModel;
     private final OpenAiImageModel imageModel;
     private final BucketService bucketService;
-    private static final Logger LOGGER =  LoggerFactory.getLogger(OpenAIServiceImpl.class);
+    private static final Logger LOGGER =  LoggerFactory.getLogger(OpenAiService.class);
 
-    public OpenAIServiceImpl(OpenAiChatModel chatModel, OpenAiImageModel imageModel, BucketService bucketService) {
+    public OpenAiService(OpenAiChatModel chatModel, OpenAiImageModel imageModel, BucketService bucketService) {
         this.chatModel = chatModel;
         this.imageModel = imageModel;
         this.bucketService = bucketService;

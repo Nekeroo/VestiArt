@@ -1,8 +1,8 @@
 package com.project.vestiart.services;
 
 import com.project.vestiart.models.User;
-import com.project.vestiart.services.interfaces.JwtService;
-import com.project.vestiart.services.interfaces.UserService;
+import com.project.vestiart.services.interfaces.IJwtService;
+import com.project.vestiart.services.interfaces.IUserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -14,17 +14,17 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 
 @Service
-public class JwtServiceImpl implements JwtService {
+public class JwtService implements IJwtService {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    private final UserService userService;
+    private final IUserService IUserService;
 
     private Key key;
 
-    public JwtServiceImpl(UserService userService) {
-        this.userService = userService;
+    public JwtService(IUserService IUserService) {
+        this.IUserService = IUserService;
     }
 
     @PostConstruct
@@ -49,7 +49,7 @@ public class JwtServiceImpl implements JwtService {
 
         String username = claims.getSubject();
 
-        return userService.getUser(username);
+        return IUserService.getUser(username);
     }
 
     public boolean isUserValid(String token) {
