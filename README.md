@@ -12,7 +12,11 @@ Pour travailler / utiliser ce projet, nous vous recommandons :
 * Un outil de testing API (*Exemple : Bruno*)
 * Un JDK pour Java (*Version recommandée : 21 - Si ce n'est pas le cas, cliquez-ici :https://jdk.java.net/archive*)
 * Une connexion internet stable
-* Maven (Si ce n'est pas le cas, cliquez-ici : https://maven.apache.org/install.html)
+* Maven (Si ce n'est pas le cas, vous pouvez l'installer via Chocolatey
+```bash
+choco install maven
+```
+Ou sinon cliquez-ici : https://maven.apache.org/install.html)
 
 ### Fichier d'Environnement
 
