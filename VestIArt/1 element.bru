@@ -5,13 +5,13 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/innovation/create
+  url: {{domain}}innovation/create
   body: json
   auth: bearer
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJNYXRoIiwiaWF0IjoxNzUwNzU2MjIxLCJleHAiOjE3NTA3NTc0MzAsInJvbGVzIjpbIlVzZXIiXX0.10f4T9om5oW80-OSryx9l1BmoY7_eOOSb3xHcfQqy-0vuHn8RHtldRGN8OrM2jPAer_0USVdO_l77rHlTJTuqA
+  token: {{token}}
 }
 
 body:json {

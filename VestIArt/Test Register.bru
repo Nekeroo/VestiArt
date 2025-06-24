@@ -5,14 +5,19 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/auth/api/register
+  url: {{domain}}auth/api/register
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "username": "Math",
+    "username": "Testeur",
     "password": "AAAAAAA"
   }
+}
+
+script:post-response {
+  let data = res.body;
+  bru.setEnvVar("token", data.token);
 }
