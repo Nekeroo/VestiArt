@@ -10,5 +10,6 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 COPY src/main/resources/application-prod.properties /app/application-prod.properties
 
+EXPOSE 8080
 # Lancement avec le profil prod
 ENTRYPOINT ["java", "-jar", "app.jar", "--spring.config.location=classpath:/application-prod.properties,/app/application-prod.properties", "--spring.profiles.active=prod"]
