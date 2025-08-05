@@ -4,39 +4,26 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.project.vestiart.models.BucketInfos;
 import com.project.vestiart.models.Idea;
 import com.project.vestiart.models.PdfInfos;
-import com.project.vestiart.services.database.BucketService;
 import com.project.vestiart.services.interfaces.IPdfService;
 import org.springframework.stereotype.Service;
 
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
 public class PdfService implements IPdfService {
 
-    private final BucketService bucketService;
-
-
-    public PdfService(BucketService bucketService) {
-        this.bucketService = bucketService;
-    }
-
     public PdfInfos generatePdf(Idea idea) throws IOException {
         try {
-            BucketInfos bucketInfos;
             byte[] pdfBytes = this.buildPDFFromIdea(idea);
-            bucketInfos = bucketService.uploadFileFromGeneration(idea.getTag1(), idea.getTag2(), pdfBytes, ".pdf");
 
             return PdfInfos.builder()
-                    .idExternePdf(bucketInfos.getIdExterne())
-                    .url(bucketInfos.getUrl())
+                    .pdf(pdfBytes)
                     .build();
 
         } catch (DocumentException | IOException e) {
@@ -73,9 +60,9 @@ public class PdfService implements IPdfService {
         document.add(metadata);
 
         // Image
-        if (idea.getImage() != null && !idea.getImage().isEmpty()) {
+        if (idea.getImage() != null && (idea.getImage().getData().length != 0)) {
             try {
-                Image urlImage = Image.getInstance(new URL(idea.getImage()));
+                Image urlImage = Image.getInstance(idea.getImage().getData());
                 urlImage.scaleToFit(300, 300);
                 urlImage.setAlignment(Element.ALIGN_CENTER);
                 document.add(urlImage);

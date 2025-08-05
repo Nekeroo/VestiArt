@@ -14,13 +14,9 @@ public interface IIdeaService {
 
     void saveIdea(Idea idea);
 
-    Optional<Idea> getIdeaByIdExternePdf(String idExternePdf);
+    Optional<Idea> getIdeaFromId(String id);
 
     void removeIdea(Idea Idea);
-
-    List<Idea> retrieveLastIdea(int numberOfElements);
-
-    List<Idea> retrievePaginatedIdea(int page, int size);
 
     Idea updateIdea(Idea idea);
 

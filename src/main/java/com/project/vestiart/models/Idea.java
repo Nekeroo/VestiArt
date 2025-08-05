@@ -29,19 +29,15 @@ public class Idea {
     @Schema(description = "Detailed description of the fashion idea")
     private String description;
 
-    @Column(name = "idexterneimage")
-    @Schema(description = "External identifier for the idea image in storage")
-    private String idExterneImage;
-
-    @Column(name = "idexternepdf")
-    @Schema(description = "External identifier for the idea PDF document in storage")
-    private String idExternePdf;
-
+    @OneToOne
+    @JoinColumn(name = "image_id")
     @Schema(description = "Image URL or reference")
-    private String image;
+    private File image;
 
-    @Schema(description = "PDF document URL or reference")
-    private String pdf;
+    @OneToOne
+    @JoinColumn(name = "pdf_id")
+    @Schema(description = "PDF document ")
+    private File pdf;
 
     @Schema(description = "Primary tag/category for the idea", example = "Sustainable")
     private String tag1;
@@ -69,8 +65,6 @@ public class Idea {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", idExterneImage='" + idExterneImage + '\'' +
-                ", idExternePdf='" + idExternePdf + '\'' +
                 ", image='" + image + '\'' +
                 ", pdf='" + pdf + '\'' +
                 ", tag1='" + tag1 + '\'' +

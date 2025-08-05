@@ -1,8 +1,6 @@
 package com.project.vestiart.services;
 
 import com.project.vestiart.input.RequestInputDTO;
-import com.project.vestiart.models.BucketInfos;
-import com.project.vestiart.services.database.BucketService;
 import com.project.vestiart.services.interfaces.IOpenAIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +27,11 @@ public class OpenAiService implements IOpenAIService {
 
     private final OpenAiChatModel chatModel;
     private final OpenAiImageModel imageModel;
-    private final BucketService bucketService;
     private static final Logger LOGGER =  LoggerFactory.getLogger(OpenAiService.class);
 
-    public OpenAiService(OpenAiChatModel chatModel, OpenAiImageModel imageModel, BucketService bucketService) {
+    public OpenAiService(OpenAiChatModel chatModel, OpenAiImageModel imageModel) {
         this.chatModel = chatModel;
         this.imageModel = imageModel;
-        this.bucketService = bucketService;
     }
 
     public ChatResponse createMessage(String prompt) {;
@@ -70,7 +66,7 @@ public class OpenAiService implements IOpenAIService {
         );
     }
 
-    public BucketInfos getImageFromResponseOpenAi(RequestInputDTO input, String prompt) throws URISyntaxException {
+    public byte[] getImageFromResponseOpenAi(String prompt) throws URISyntaxException {
 
         ImageResponse response = this.createImage(prompt);
 
@@ -81,9 +77,6 @@ public class OpenAiService implements IOpenAIService {
         RequestEntity<Void> request = RequestEntity.get(uri).build();
         ResponseEntity<byte[]> imageResponse = restTemplate.exchange(request, byte[].class);
 
-        byte[] imageBytes = imageResponse.getBody();
-
-        return bucketService.uploadFileFromGeneration(input.getPerson(), input.getReference(), imageBytes, ".png");
-
+        return imageResponse.getBody();
     }
 }

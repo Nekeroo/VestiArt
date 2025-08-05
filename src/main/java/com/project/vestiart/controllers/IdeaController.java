@@ -6,7 +6,6 @@ import com.project.vestiart.models.CustomUserDetails;
 import com.project.vestiart.models.Idea;
 import com.project.vestiart.models.Message;
 import com.project.vestiart.models.User;
-import com.project.vestiart.services.database.BucketService;
 import com.project.vestiart.services.database.RequestInputService;
 import com.project.vestiart.services.interfaces.IIdeaService;
 import com.project.vestiart.services.interfaces.IUserService;
@@ -33,7 +32,6 @@ import java.util.Optional;
 public class IdeaController {
 
     private final IdeaMapper ideaMapper;
-    private final BucketService bucketService;
     private final IIdeaService IIdeaService;
 
     private final IUserService IUserService;
@@ -41,10 +39,9 @@ public class IdeaController {
     private final RequestInputService requestInputService;
 
 
-    public IdeaController(IdeaMapper ideaMapper, BucketService bucketService, IIdeaService IIdeaService, IUserService IUserService, RequestInputService requestInputService) {
+    public IdeaController(IdeaMapper ideaMapper,  IIdeaService IIdeaService, IUserService IUserService, RequestInputService requestInputService) {
         this.IIdeaService = IIdeaService;
         this.ideaMapper = ideaMapper;
-        this.bucketService = bucketService;
         this.IUserService = IUserService;
         this.requestInputService = requestInputService;
     }
@@ -59,7 +56,7 @@ public class IdeaController {
     @GetMapping("/retrieve/{uid}")
     public ResponseEntity<?> retrieIdeaByUid(
             @Parameter(description = "Unique identifier of the idea") @PathVariable String uid) {
-        Optional<Idea> idea = IIdeaService.getIdeaByIdExternePdf(uid);
+        Optional<Idea> idea = IIdeaService.getIdeaFromId(uid);
 
         if (idea.isEmpty()) {
             return ResponseEntity.badRequest().body("Idea not found");
@@ -86,7 +83,7 @@ public class IdeaController {
                     .body(Message.builder().content("Unauthorized").build());
         }
 
-        Optional<Idea> idea = IIdeaService.getIdeaByIdExternePdf(uid);
+        Optional<Idea> idea = IIdeaService.getIdeaFromId(uid);
 
 
         System.out.println(idea);
@@ -111,9 +108,6 @@ public class IdeaController {
 
         requestInputService.deleteRequestInput(ideaEntity);
         IIdeaService.removeIdea(ideaEntity);
-        bucketService.deleteDocumentFromTheBucket(ideaEntity.getIdExternePdf());
-        bucketService.deleteDocumentFromTheBucket(ideaEntity.getIdExterneImage());
-
         return ResponseEntity.noContent().build();
     }
 

@@ -12,11 +12,5 @@ import java.util.Optional;
 @Repository
 public interface IIdeaRepository extends CrudRepository<Idea, Long> {
 
-    Optional<Idea> findByidExterneImage(String idExterneImage);
-
     List<Idea> findAllByOrderByDateCreateDesc(Pageable pageRequest);
-
-    List<Idea> findAll(Pageable pageable);
-
-    Optional<Idea> findByIdExternePdf(String idExternePdf);
 }

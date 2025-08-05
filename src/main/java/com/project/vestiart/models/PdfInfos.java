@@ -10,8 +10,6 @@ import lombok.*;
 @Setter
 public class PdfInfos {
 
-    private String url;
-
-    private String idExternePdf;
+    private byte[] pdf;
 
 }

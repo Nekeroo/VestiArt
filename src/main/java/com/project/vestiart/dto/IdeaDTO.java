@@ -1,6 +1,7 @@
 package com.project.vestiart.dto;
 
 import com.project.vestiart.enums.TypeEnum;
+import com.project.vestiart.models.File;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -15,14 +16,8 @@ public record IdeaDTO(
         @Schema(description = "Detailed description of the idea", example = "A collection of sustainable denim using recycled materials and eco-friendly dyes")
         String description,
 
-        @Schema(description = "URL to the idea's image")
-        String imageUrl,
-
-        @Schema(description = "External ID reference for the image")
-        String idExterneImage,
-
-        @Schema(description = "External ID reference for the PDF document")
-        String idExternePdf,
+        @Schema(description = "image of the idea")
+        File image,
 
         @Schema(description = "Primary tag/category", example = "Sustainable")
         String tag1,
@@ -34,7 +29,7 @@ public record IdeaDTO(
         LocalDateTime dateCreate,
 
         @Schema(description = "URL to the idea's detailed PDF document")
-        String pdfUrl,
+        File pdf,
 
         @Schema(description = "Type classification of the idea")
         TypeEnum type) { }

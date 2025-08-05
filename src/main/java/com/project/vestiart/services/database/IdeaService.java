@@ -26,10 +26,12 @@ public class IdeaService implements IIdeaService {
     private EntityManager em;
     private final IIdeaRepository iidea;
     private final IdeaMapper ideaMapper;
+    private final FileService fileService;
 
-    public IdeaService(IIdeaRepository iidea, IdeaMapper ideaMapper) {
+    public IdeaService(IIdeaRepository iidea, IdeaMapper ideaMapper, FileService fileService) {
         this.iidea = iidea;
         this.ideaMapper = ideaMapper;
+        this.fileService = fileService;
     }
 
     public List<Idea> retrieveAll() {
@@ -46,22 +48,23 @@ public class IdeaService implements IIdeaService {
 
     public void saveIdea(Idea idea) {
         idea.setDateCreate(LocalDateTime.now());
+        fileService.saveFile(idea.getImage());
         iidea.save(idea);
     }
 
     public Idea updateIdea(Idea idea) {
         Idea ideaStored = iidea.findById(idea.getId()).get();
 
-        ideaStored.setIdExternePdf(idea.getIdExternePdf());
         ideaStored.setPdf(idea.getPdf());
 
+        fileService.saveFile(idea.getPdf());
         iidea.save(ideaStored);
 
         return ideaStored;
     }
 
-    public Optional<Idea> getIdeaByIdExternePdf(String idExterne){
-        return iidea.findByIdExternePdf(idExterne);
+    public Optional<Idea> getIdeaFromId(String id){
+        return iidea.findById(Long.parseLong(id));
     }
 
     public void removeIdea(Idea Idea) {

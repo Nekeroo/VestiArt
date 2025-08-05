@@ -50,9 +50,9 @@ public class InnovationService {
     public IdeaDTO createIdea(RequestInputDTO input, User user) throws IOException, URISyntaxException {
         String promptText = buildPromptText(input);
         String resultFromTheIdea = fetchIdeaDescription(promptText);
-        BucketInfos bucketInfos = fetchImage(promptText, input);
+        byte[] imageBytes = fetchImage(promptText);
 
-        Idea idea = buildIdeaEntity(input, resultFromTheIdea, bucketInfos, user);
+        Idea idea = buildIdeaEntity(input, resultFromTheIdea, imageBytes, user);
         RequestInput requestInput = mapRequestInput(input, idea);
 
         persistIdeaAndRequestInput(idea, requestInput);
@@ -90,19 +90,18 @@ public class InnovationService {
         return openAIService.getMessageFromResponseOpenAi(promptText);
     }
 
-    private BucketInfos fetchImage(String promptText, RequestInputDTO input) throws URISyntaxException {
+    private byte[] fetchImage(String promptText) throws URISyntaxException {
         LOGGER.info("Request Image");
         String promptImage = PromptUtils.formatPromptImage(promptText);
-        return openAIService.getImageFromResponseOpenAi(input, promptImage);
+        return openAIService.getImageFromResponseOpenAi(promptImage);
     }
 
-    private Idea buildIdeaEntity(RequestInputDTO input, String description, BucketInfos bucketInfos, User user) {
+    private Idea buildIdeaEntity(RequestInputDTO input, String description, byte[] image, User user) {
         return Idea.builder()
-                .image(bucketInfos.getUrl())
-                .idExterneImage(bucketInfos.getIdExterne())
                 .description(description)
                 .user(user)
                 .title(input.getPerson() + " Collection")
+                .image(File.builder().data(image).contentType("image").build())
                 .tag1(input.getPerson())
                 .tag2(input.getReference())
                 .type(TypeEnum.findTypeEnumByType(input.getType()))
@@ -122,8 +121,9 @@ public class InnovationService {
 
     private void enrichWithPdf(Idea idea) throws IOException {
         PdfInfos pdfInfos = pdfService.generatePdf(idea);
-        idea.setIdExternePdf(pdfInfos.getIdExternePdf());
-        idea.setPdf(pdfInfos.getUrl());
+        idea.setPdf(File.builder()
+                .contentType("pdf")
+                .data(pdfInfos.getPdf()).build());
         ideaService.updateIdea(idea);
     }
 }
